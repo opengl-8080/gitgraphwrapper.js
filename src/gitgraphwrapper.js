@@ -1,4 +1,4 @@
-function Git() {
+function GitGraphWrapper() {
     this.gitgraph = new GitGraph();
     this.branches = {};
     this.head = undefined;

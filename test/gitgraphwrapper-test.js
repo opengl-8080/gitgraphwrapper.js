@@ -2,7 +2,7 @@ describe("test all", function() {
     var git, gitgraph;
 
     beforeEach(function() {
-        git = new Git();
+        git = new GitGraphWrapper();
         gitgraph = git.gitgraph;
     });
 

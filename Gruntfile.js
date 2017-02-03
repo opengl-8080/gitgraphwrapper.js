@@ -3,6 +3,7 @@ module.exports = function(grunt) {
         files: {
             src: 'src/gitgraphwrapper.js',
             test: 'test/gitgraphwrapper-test.js',
+            helper: 'test/MockGitGraph.js',
             min: 'dist/gitgraphwrapper.min.js'
         },
 
@@ -17,7 +18,8 @@ module.exports = function(grunt) {
             build: {
                 src: '<%= files.src %>',
                 options: {
-                    specs: '<%= files.test %>'
+                    specs: '<%= files.test %>',
+                    helpers: '<%= files.helper %>'
                 }
             }
         },

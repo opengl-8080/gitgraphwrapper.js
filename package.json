@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test": "grunt test"
+  },
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-jasmine": "^1.1.0",

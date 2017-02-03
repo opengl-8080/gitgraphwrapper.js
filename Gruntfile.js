@@ -4,9 +4,8 @@ module.exports = function(grunt) {
             src: 'src/gitgraphwrapper.js',
             test: 'test/gitgraphwrapper-test.js',
             helper: 'test/MockGitGraph.js',
-            min: 'dist/gitgraphwrapper.min.js'
+            min: 'build/gitgraphwrapper.min.js'
         },
-
         watch: {
             files: ['<%= files.src %>', '<%= files.test %>'],
             tasks: ['jasmine']

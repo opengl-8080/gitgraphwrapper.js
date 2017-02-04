@@ -1,10 +1,10 @@
 describe("test all", function() {
     describe('Test GitGraphWrapper', function() {
-        var wrapper, gitgraph;
+        var wrapper, gitGraph;
 
         beforeEach(function() {
             wrapper = new GitGraphWrapper();
-            gitgraph = wrapper.gitGraph;
+            gitGraph = wrapper.gitGraph;
         });
 
         describe('test constructor', function() {
@@ -27,7 +27,7 @@ describe("test all", function() {
 
             beforeEach(function() {
                 // setup
-                spyOn(gitgraph, 'branch').and.returnValue(createdBranch);
+                spyOn(gitGraph, 'branch').and.returnValue(createdBranch);
 
                 // exercise
                 returnValue = wrapper.branch('option');
@@ -40,7 +40,7 @@ describe("test all", function() {
 
             it("branch() method delegates GitGraph's branch() method.", function() {
                 // verify
-                expect(gitgraph.branch).toHaveBeenCalledWith('option');
+                expect(gitGraph.branch).toHaveBeenCalledWith('option');
             });
 
             it("branch() method caches created branch instance into 'branches' field.", function() {
@@ -85,7 +85,7 @@ describe("test all", function() {
 
             beforeEach(function() {
                 // setup
-                spyOn(gitgraph, 'commit');
+                spyOn(gitGraph, 'commit');
 
                 // exercise
                 returnValue = wrapper.commit('option');
@@ -98,7 +98,7 @@ describe("test all", function() {
 
             it("commit() method delegates to GitGraph's commit() method.", function() {
                 // verify
-                expect(gitgraph.commit).toHaveBeenCalledWith('option');
+                expect(gitGraph.commit).toHaveBeenCalledWith('option');
             });
         });
 
@@ -107,7 +107,7 @@ describe("test all", function() {
 
             beforeEach(function() {
                 // setup
-                spyOn(gitgraph, 'tag');
+                spyOn(gitGraph, 'tag');
 
                 // exercise
                 returnValue = wrapper.tag('option');
@@ -120,7 +120,7 @@ describe("test all", function() {
 
             it("tag() method delegates to GitGraph's tag() method.", function() {
                 // verify
-                expect(gitgraph.tag).toHaveBeenCalledWith('option');
+                expect(gitGraph.tag).toHaveBeenCalledWith('option');
             });
         });
 
@@ -130,7 +130,7 @@ describe("test all", function() {
 
             beforeEach(function() {
                 // setup
-                spyOn(gitgraph, 'orphanBranch').and.returnValue(createdBranch);
+                spyOn(gitGraph, 'orphanBranch').and.returnValue(createdBranch);
 
                 // exercise
                 returnValue = wrapper.orphanBranch('option');
@@ -143,7 +143,7 @@ describe("test all", function() {
 
             it("orphanBranch() method delegates GitGraph's orphanBranch() method.", function() {
                 // verify
-                expect(gitgraph.orphanBranch).toHaveBeenCalledWith('option');
+                expect(gitGraph.orphanBranch).toHaveBeenCalledWith('option');
             });
 
             it("orphanBranch() method caches created orphanBranch instance into 'branches' field.", function() {
@@ -181,12 +181,12 @@ describe("test all", function() {
     });
 
     describe('Test GitGraphWrapperExtention', function() {
-        var wrapper, gitgraph;
+        var wrapper, gitGraph;
 
         beforeEach(function() {
             // setup
             wrapper = new GitGraphWrapperExtention();
-            gitgraph = wrapper.gitGraph;
+            gitGraph = wrapper.gitGraph;
 
             spyOn(GitGraphWrapperExtention.prototype, 'branch');
             spyOn(GitGraphWrapper.prototype, 'checkout');

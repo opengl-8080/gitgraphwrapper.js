@@ -187,35 +187,41 @@ describe("test all", function() {
             // setup
             wrapper = new GitGraphWrapperExtention();
             gitGraph = wrapper.gitGraph;
-
-            spyOn(GitGraphWrapperExtention.prototype, 'branch');
-            spyOn(GitGraphWrapper.prototype, 'checkout');
         });
 
-        it("call checkout() method with '-b' option then branch() and checkout() methods are called.", function() {
-            // exercise
-            wrapper.checkout('-b', 'branchName');
+        describe('test checkout() method', function() {
+            beforeEach(function() {
+                // setup
+                spyOn(GitGraphWrapperExtention.prototype, 'branch');
+                spyOn(GitGraphWrapper.prototype, 'checkout');
+            });
+            
+            it("call checkout() method with '-b' option then branch() and checkout() methods are called.", function() {
+                // exercise
+                wrapper.checkout('-b', 'branchName');
 
-            // verify
-            expect(GitGraphWrapperExtention.prototype.branch).toHaveBeenCalledWith('branchName');
-            expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
+                // verify
+                expect(GitGraphWrapperExtention.prototype.branch).toHaveBeenCalledWith('branchName');
+                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
+            });
+
+            it("call checkout() method without '-b' option then checkout() method is only called.", function() {
+                // exercise
+                wrapper.checkout('branchName');
+
+                // verify
+                expect(GitGraphWrapperExtention.prototype.branch.calls.count()).toBe(0);
+                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
+            });
+
+            it("checkout() method returns itself.", function() {
+                // exercise
+                var returnValue = wrapper.checkout('branchName');
+
+                // verify
+                expect(returnValue).toBe(wrapper);
+            });
         });
 
-        it("call checkout() method without '-b' option then checkout() method is only called.", function() {
-            // exercise
-            wrapper.checkout('branchName');
-
-            // verify
-            expect(GitGraphWrapperExtention.prototype.branch.calls.count()).toBe(0);
-            expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
-        });
-
-        it("checkout() method returns itself.", function() {
-            // exercise
-            var returnValue = wrapper.checkout('branchName');
-
-            // verify
-            expect(returnValue).toBe(wrapper);
-        });
     });
 });

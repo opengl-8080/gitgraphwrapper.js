@@ -195,7 +195,7 @@ describe("test all", function() {
                 spyOn(GitGraphWrapperExtention.prototype, 'branch');
                 spyOn(GitGraphWrapper.prototype, 'checkout');
             });
-            
+
             it("call checkout() method with '-b' option then branch() and checkout() methods are called.", function() {
                 // exercise
                 wrapper.checkout('-b', 'branchName');
@@ -223,5 +223,29 @@ describe("test all", function() {
             });
         });
 
+        describe('test orphanCheckout() method', function() {
+            beforeEach(function() {
+                // setup
+                spyOn(GitGraphWrapperExtention.prototype, 'orphanBranch');
+                spyOn(GitGraphWrapper.prototype, 'checkout');
+            });
+
+            it("call orphanCheckout() method then orphanBranch() and checkout() methods are called.", function() {
+                // exercise
+                wrapper.orphanCheckout('branchName');
+
+                // verify
+                expect(GitGraphWrapperExtention.prototype.orphanBranch).toHaveBeenCalledWith('branchName');
+                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
+            });
+
+            it("orphanCheckout() method returns itself.", function() {
+                // exercise
+                var returnValue = wrapper.orphanCheckout('branchName');
+
+                // verify
+                expect(returnValue).toBe(wrapper);
+            });
+        });
     });
 });

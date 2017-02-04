@@ -57,6 +57,12 @@
         return this;
     };
 
+    GitGraphWrapperExtention.prototype.orphanCheckout = function(branchName) {
+        this.orphanBranch(branchName);
+        this.checkout(branchName);
+        return this;
+    };
+
     function _inherits(SuperClass, SubClass) {
         var f = function() {};
         f.prototype = SuperClass.prototype;

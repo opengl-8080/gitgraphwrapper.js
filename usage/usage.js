@@ -52,8 +52,7 @@ new GitGraphWrapperExtention({elementId: 'gitGraphExtention', orientation: 'vert
     .commit()
 
     // create orphan branch 'orphan' and checkout it.
-    .orphanBranch('orphan')
-    .checkout('orphan')
+    .orphanCheckout('orphan')
     .commit()
     .commit()
 

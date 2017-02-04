@@ -3,7 +3,7 @@ describe("test all", function() {
 
     beforeEach(function() {
         git = new GitGraphWrapper();
-        gitgraph = git.gitgraph;
+        gitgraph = git.gitGraph;
     });
 
     describe('test branch() method', function() {

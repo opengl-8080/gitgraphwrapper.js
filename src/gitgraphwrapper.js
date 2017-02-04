@@ -1,10 +1,10 @@
 function GitGraphWrapper() {
-    this.gitgraph = new GitGraph();
+    this.gitGraph = new GitGraph();
     this.branches = {};
     this.head = undefined;
 
     this.branch = function(option) {
-        var createdBranch = this.gitgraph.branch(option);
+        var createdBranch = this.gitGraph.branch(option);
         this.branches[createdBranch.name] = createdBranch;
         return this;
     };
@@ -16,7 +16,7 @@ function GitGraphWrapper() {
     };
 
     this.commit = function(option) {
-        this.gitgraph.commit(option);
+        this.gitGraph.commit(option);
         return this;
     };
 }

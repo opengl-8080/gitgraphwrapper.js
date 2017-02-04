@@ -108,4 +108,32 @@ describe("test all", function() {
             expect(gitgraph.tag).toHaveBeenCalledWith('option');
         });
     });
+
+    describe('test orphanBranch() method', function() {
+        var createdBranch = {name: 'branchName'};
+        var returnValue;
+
+        beforeEach(function() {
+            // setup
+            spyOn(gitgraph, 'orphanBranch').and.returnValue(createdBranch);
+
+            // exercise
+            returnValue = git.orphanBranch('option');
+        });
+
+        it('orphanBranch() method returns itself.', function() {
+            // verify
+            expect(returnValue).toBe(git);
+        });
+
+        it("orphanBranch() method delegates GitGraph's orphanBranch() method.", function() {
+            // verify
+            expect(gitgraph.orphanBranch).toHaveBeenCalledWith('option');
+        });
+
+        it("orphanBranch() method caches created orphanBranch instance into 'branches' field.", function() {
+            // verify
+            expect(git.branches.branchName).toBe(createdBranch);
+        });
+    });
 });

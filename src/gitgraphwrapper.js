@@ -24,4 +24,10 @@ function GitGraphWrapper() {
         this.gitGraph.tag(option);
         return this;
     };
+
+    this.orphanBranch = function(option) {
+        var createdBranch = this.gitGraph.orphanBranch(option);
+        this.branches[createdBranch.name] = createdBranch;
+        return this;
+    };
 }

@@ -14,4 +14,9 @@ function GitGraphWrapper() {
         this.head.checkout();
         return this;
     };
+
+    this.commit = function(option) {
+        this.gitgraph.commit(option);
+        return this;
+    };
 }

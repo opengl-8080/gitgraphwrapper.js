@@ -23,7 +23,7 @@ describe("test all", function() {
             expect(returnValue).toBe(git);
         });
 
-        it("branch() method proxies GitGraph's branch() method.", function() {
+        it("branch() method delegates GitGraph's branch() method.", function() {
             // verify
             expect(gitgraph.branch).toHaveBeenCalledWith('option');
         });
@@ -54,7 +54,7 @@ describe("test all", function() {
             expect(returnValue).toBe(git);
         });
 
-        it("checkout() method selects a branch instance specified by argument and proxies checkout() method.", function() {
+        it("checkout() method selects a branch instance specified by argument and delegates checkout() method.", function() {
             // verify
             expect(someBranch.checkout).toHaveBeenCalled();
         });
@@ -65,5 +65,25 @@ describe("test all", function() {
         });
     });
 
+    describe('test commit() method', function() {
+        var returnValue;
 
+        beforeEach(function() {
+            // setup
+            spyOn(gitgraph, 'commit');
+
+            // exercise
+            returnValue = git.commit('option');
+        });
+
+        it('commit() method returns itself.', function() {
+            // verify
+            expect(returnValue).toBe(git);
+        });
+
+        it("commit() method delegates to GitGraph's commit() method.", function() {
+            // verify
+            expect(gitgraph.commit).toHaveBeenCalledWith('option');
+        });
+    });
 });

@@ -1,9 +1,9 @@
 describe("test all", function() {
-    var git, gitgraph;
+    var wrapper, gitgraph;
 
     beforeEach(function() {
-        git = new GitGraphWrapper();
-        gitgraph = git.gitGraph;
+        wrapper = new GitGraphWrapper();
+        gitgraph = wrapper.gitGraph;
     });
 
     describe('test constructor', function() {
@@ -29,12 +29,12 @@ describe("test all", function() {
             spyOn(gitgraph, 'branch').and.returnValue(createdBranch);
 
             // exercise
-            returnValue = git.branch('option');
+            returnValue = wrapper.branch('option');
         });
 
         it('branch() method returns itself.', function() {
             // verify
-            expect(returnValue).toBe(git);
+            expect(returnValue).toBe(wrapper);
         });
 
         it("branch() method delegates GitGraph's branch() method.", function() {
@@ -44,7 +44,7 @@ describe("test all", function() {
 
         it("branch() method caches created branch instance into 'branches' field.", function() {
             // verify
-            expect(git.branches.branchName).toBe(createdBranch);
+            expect(wrapper.branches.branchName).toBe(createdBranch);
         });
     });
 
@@ -56,16 +56,16 @@ describe("test all", function() {
 
         beforeEach(function() {
             // setup
-            git.branches.someBranch = someBranch;
+            wrapper.branches.someBranch = someBranch;
             spyOn(someBranch, 'checkout');
 
             // exercise
-            returnValue = git.checkout('someBranch');
+            returnValue = wrapper.checkout('someBranch');
         });
 
         it('checkout() method returns itself.', function() {
             // verify
-            expect(returnValue).toBe(git);
+            expect(returnValue).toBe(wrapper);
         });
 
         it("checkout() method selects a branch instance specified by argument and delegates checkout() method.", function() {
@@ -75,7 +75,7 @@ describe("test all", function() {
 
         it("checkout() method changes a 'head' field to specified branch instance.", function() {
             // verify
-            expect(git.head).toBe(someBranch);
+            expect(wrapper.head).toBe(someBranch);
         });
     });
 
@@ -87,12 +87,12 @@ describe("test all", function() {
             spyOn(gitgraph, 'commit');
 
             // exercise
-            returnValue = git.commit('option');
+            returnValue = wrapper.commit('option');
         });
 
         it('commit() method returns itself.', function() {
             // verify
-            expect(returnValue).toBe(git);
+            expect(returnValue).toBe(wrapper);
         });
 
         it("commit() method delegates to GitGraph's commit() method.", function() {
@@ -109,12 +109,12 @@ describe("test all", function() {
             spyOn(gitgraph, 'tag');
 
             // exercise
-            returnValue = git.tag('option');
+            returnValue = wrapper.tag('option');
         });
 
         it('tag() method returns itself.', function() {
             // verify
-            expect(returnValue).toBe(git);
+            expect(returnValue).toBe(wrapper);
         });
 
         it("tag() method delegates to GitGraph's tag() method.", function() {
@@ -132,12 +132,12 @@ describe("test all", function() {
             spyOn(gitgraph, 'orphanBranch').and.returnValue(createdBranch);
 
             // exercise
-            returnValue = git.orphanBranch('option');
+            returnValue = wrapper.orphanBranch('option');
         });
 
         it('orphanBranch() method returns itself.', function() {
             // verify
-            expect(returnValue).toBe(git);
+            expect(returnValue).toBe(wrapper);
         });
 
         it("orphanBranch() method delegates GitGraph's orphanBranch() method.", function() {
@@ -147,7 +147,7 @@ describe("test all", function() {
 
         it("orphanBranch() method caches created orphanBranch instance into 'branches' field.", function() {
             // verify
-            expect(git.branches.branchName).toBe(createdBranch);
+            expect(wrapper.branches.branchName).toBe(createdBranch);
         });
     });
 
@@ -157,14 +157,14 @@ describe("test all", function() {
         beforeEach(function() {
             // setup
             toBranch = {};
-            git.head = toBranch;
+            wrapper.head = toBranch;
 
             fromBranch = {merge: function() {}};
-            git.branches.fromBranchName = fromBranch;
+            wrapper.branches.fromBranchName = fromBranch;
             spyOn(fromBranch, 'merge');
 
             // exercise
-            returnValue = git.merge('fromBranchName', 'option');
+            returnValue = wrapper.merge('fromBranchName', 'option');
         });
 
         it("merge() method delegates to specified branch's merge() method with arguments there are a head branch and an option.", function() {
@@ -174,7 +174,7 @@ describe("test all", function() {
 
         it("merge() method returns itself.", function() {
             // verify
-            expect(returnValue).toBe(git);
+            expect(returnValue).toBe(wrapper);
         });
     });
 });

@@ -38,5 +38,32 @@
         return this;
     };
 
+
+
+    function GitGraphWrapperExtention(option) {
+        GitGraphWrapper.call(this, option);
+    }
+
+    _inherits(GitGraphWrapper, GitGraphWrapperExtention);
+
+    GitGraphWrapperExtention.prototype.checkout = function() {
+        if (arguments[0] === '-b') {
+            this.branch(arguments[1]);
+        }
+
+        var branchName = (1 < arguments.length) ? arguments[1] : arguments[0];
+        GitGraphWrapper.prototype.checkout.call(this, branchName);
+
+        return this;
+    };
+
+    function _inherits(SuperClass, SubClass) {
+        var f = function() {};
+        f.prototype = SuperClass.prototype;
+        SubClass.prototype = new f();
+        SubClass.prototype.constructor = SubClass;
+    }
+
     window.GitGraphWrapper = GitGraphWrapper;
+    window.GitGraphWrapperExtention = GitGraphWrapperExtention;
 })();

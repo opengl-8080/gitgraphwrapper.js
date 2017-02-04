@@ -19,4 +19,9 @@ function GitGraphWrapper() {
         this.gitGraph.commit(option);
         return this;
     };
+
+    this.tag = function(option) {
+        this.gitGraph.tag(option);
+        return this;
+    };
 }

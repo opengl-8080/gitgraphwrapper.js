@@ -86,4 +86,26 @@ describe("test all", function() {
             expect(gitgraph.commit).toHaveBeenCalledWith('option');
         });
     });
+
+    describe('test tag() method', function() {
+        var returnValue;
+
+        beforeEach(function() {
+            // setup
+            spyOn(gitgraph, 'tag');
+
+            // exercise
+            returnValue = git.tag('option');
+        });
+
+        it('tag() method returns itself.', function() {
+            // verify
+            expect(returnValue).toBe(git);
+        });
+
+        it("tag() method delegates to GitGraph's tag() method.", function() {
+            // verify
+            expect(gitgraph.tag).toHaveBeenCalledWith('option');
+        });
+    });
 });

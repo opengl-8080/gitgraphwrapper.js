@@ -113,7 +113,7 @@ new GitGraphWrapperExtention()
 ;
 ```
 
-It is also enable to create new branch from specified other branch like "checkout('-b', 'new_branch', 'start_branch')".
+It is also enable to create new branch from specified other branch like `checkout('-b', 'new_branch', 'start_branch')`.
 
 More details are [usage.html](usage/usage.html).
 

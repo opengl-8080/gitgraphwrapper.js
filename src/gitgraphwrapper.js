@@ -1,6 +1,6 @@
 (function() {
-    function GitGraphWrapper() {
-        this.gitGraph = new GitGraph();
+    function GitGraphWrapper(option) {
+        this.gitGraph = new GitGraph(option);
         this.branches = {};
         this.head = undefined;
     }

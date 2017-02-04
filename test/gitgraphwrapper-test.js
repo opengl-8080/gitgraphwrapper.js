@@ -6,6 +6,20 @@ describe("test all", function() {
         gitgraph = git.gitGraph;
     });
 
+    describe('test constructor', function() {
+
+        it("constructor option is passed to GitGraph's constructor.", function() {
+            // setup
+            spyOn(window, 'GitGraph');
+
+            // exercise
+            new GitGraphWrapper('option');
+
+            // verify
+            expect(window.GitGraph).toHaveBeenCalledWith('option');
+        });
+    });
+
     describe('test branch() method', function() {
         var createdBranch = {name: 'branchName'};
         var returnValue;

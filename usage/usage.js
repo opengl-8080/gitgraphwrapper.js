@@ -1,4 +1,4 @@
-new GitGraphWrapper()
+new GitGraphWrapper({orientation: 'vertical-reverse'})
     .branch('master')
     .checkout('master')
     .commit()

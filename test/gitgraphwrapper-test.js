@@ -288,6 +288,35 @@ describe("test all", function() {
 
         describe('test default branch() method arguments definition', function() {
 
+            it('if default branch option is defined, it will be used when orphanBranch() method is called.', function() {
+                // setup
+                var wrapper = new GitGraphWrapperExtention()
+                                    .defaultOptions({
+                                        branch: {
+                                            orphan: {
+                                                color: 'purple',
+                                                commitDefaultOptions: {
+                                                    color: 'purple'
+                                                }
+                                            }
+                                        }
+                                    });
+
+                spyOn(GitGraphWrapper.prototype, 'orphanBranch');
+
+                // exercise
+                wrapper.orphanBranch('orphan');
+
+                // verify
+                expect(GitGraphWrapper.prototype.orphanBranch).toHaveBeenCalledWith({
+                    name: 'orphan',
+                    color: 'purple',
+                    commitDefaultOptions: {
+                        color: 'purple'
+                    }
+                });
+            });
+
             it('if default branch option is defined, it will be used when branch() method is called.', function() {
                 // setup
                 var wrapper = new GitGraphWrapperExtention()

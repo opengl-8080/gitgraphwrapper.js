@@ -9,8 +9,7 @@ new GitGraphWrapper({orientation: 'vertical-reverse'})
     })
     .checkout('master')
     .commit()
-    .commit()
-    .tag('v1.0')
+    .tag('v0.0.0')
 
     // create 'develop' branch and checkout it.
     .branch({
@@ -21,47 +20,51 @@ new GitGraphWrapper({orientation: 'vertical-reverse'})
         }
     })
     .checkout('develop')
-    .commit('Hello')
-    .tag('tag2')
     .commit()
 
-    // checkout master
-    .checkout('master')
-    .commit()
-
-    // create 'topic' branch from 'develop' branch.
-    .checkout('develop')
-    .branch('topic')
+    // create and checkout 'topic1' branch.
+    .branch('topic1')
+    .checkout('topic1')
     .commit()
     .commit()
 
-    // merge 'topic' into 'develop'
-    .checkout('develop')
-    .merge('topic')
-
-    // create orphan branch 'orphan' and checkout it.
-    .orphanBranch('orphan')
-    .checkout('orphan')
-    .commit()
-    .commit()
-
-    // checkout 'develop'
-    .checkout('develop')
-    .commit()
-
-    // checkout 'master' and merge 'develop' and 'orphan' branches.
-    .checkout('master')
-    .merge('develop', {message: 'merge from develop'})
-    .merge('orphan')
-
+    // create 'topic2' branch from 'develop' branch and checkout 'topic2' branch.
     .checkout('develop')
     .branch('topic2')
     .checkout('topic2')
     .commit()
+
+    // merge 'topic1' into 'develop'.
+    .checkout('develop')
+    .merge('topic1')
+
+    // merge 'develop' into 'topic2'.
+    .checkout('topic2')
+    .merge('develop')
+    .commit()
+    // and merge 'topic2' into 'develop'.
     .checkout('develop')
     .merge('topic2')
+
+    // merge 'develop' into 'master'.
     .checkout('master')
     .merge('develop')
+    .tag('v1.0.0')
+
+    // create oraphan branch.
+    .orphanBranch({
+        name: 'orphan',
+        color: 'purple',
+        commitDefaultOptions: {
+            color: 'purple'
+        }
+    })
+    .checkout('orphan')
+    .commit()
+    .commit()
+    .checkout('master')
+    .merge('orphan')
+    .tag('v2.0.0')
 ;
 
 
@@ -84,54 +87,56 @@ new GitGraphWrapperExtention({
                 commitDefaultOptions: {
                     color: 'deepskyblue'
                 }
+            },
+            orphan: {
+                color: 'purple',
+                commitDefaultOptions: {
+                    color: 'purple'
+                }
             }
         }
     })
 
-    // create 'master' branch and checkout it.
-    .checkout('-b', 'master')
+    // create 'master' branch and initial commit.
+    .branch('master')
     .commit()
-    .commit()
-    .tag('v1.0')
-
-    // create 'develop' branch and checkout it.
+    .tag('v0.0.0')
+    
+    // create and checkout 'develop' branch.
     .checkout('-b', 'develop')
-    .commit('Hello')
-    .tag('tag2')
     .commit()
 
-    // checkout master
-    .checkout('master')
-    .commit()
-
-    // create 'topic' branch from 'develop' branch and checkout 'topic' branch.
-    .checkout('-b', 'topic', 'develop')
+    // create and checkout 'topic1' branch.
+    .checkout('-b', 'topic1')
     .commit()
     .commit()
 
-    // merge 'topic' into 'develop'
+    // create 'topic2' branch from 'develop' branch and checkout 'topic2' branch.
+    .checkout('-b', 'topic2', 'develop')
+    .commit()
+
+    // merge 'topic1' into 'develop'.
     .checkout('develop')
-    .merge('topic')
+    .merge('topic1')
 
-    // create orphan branch 'orphan' and checkout it.
+    // merge 'develop' into 'topic2'.
+    .checkout('topic2')
+    .merge('develop')
+    .commit()
+    // and merge 'topic2' into 'develop'.
+    .checkout('develop')
+    .merge('topic2')
+
+    // merge 'develop' into 'master'.
+    .checkout('master')
+    .merge('develop')
+    .tag('v1.0.0')
+
+    // create oraphan branch.
     .orphanCheckout('orphan')
     .commit()
     .commit()
-
-    // checkout 'develop'
-    .checkout('develop')
-    .commit()
-
-    // checkout 'master' and merge 'develop' and 'orphan' branches.
     .checkout('master')
-    .merge('develop', {message: 'merge from develop'})
     .merge('orphan')
-
-    .branch('topic2', 'develop')
-    .checkout('topic2')
-    .commit('topic2')
-    .checkout('develop')
-    .merge('topic2')
-    .checkout('master')
-    .merge('develop')
+    .tag('v2.0.0')
 ;

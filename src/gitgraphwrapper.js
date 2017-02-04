@@ -61,21 +61,35 @@
         return this.defaultOptions.branch[branchName];
     };
 
-    GitGraphWrapperExtention.prototype.branch = function(option, startPointBranchName) {
-        var specifiedOption = _normalizeBranchOption(option);
-        var defaultOptions = this.getDefaultOptions(specifiedOption.name);
+    GitGraphWrapperExtention.prototype.orphanBranch = function(option) {
+        var branchOption = _buildBranchOption(this, option);
 
-        var extendOption = {};
-        GitGraphWrapperExtention.extend(extendOption, defaultOptions);
-        GitGraphWrapperExtention.extend(extendOption, specifiedOption);
+        GitGraphWrapper.prototype.orphanBranch.call(this, branchOption);
+
+        return this;
+    };
+
+    GitGraphWrapperExtention.prototype.branch = function(option, startPointBranchName) {
+        var branchOption = _buildBranchOption(this, option);
 
         if (typeof startPointBranchName === 'string') {
             this.checkout(startPointBranchName);
         }
-        GitGraphWrapper.prototype.branch.call(this, extendOption);
+        GitGraphWrapper.prototype.branch.call(this, branchOption);
 
         return this;
     };
+
+    function _buildBranchOption(self, option) {
+        var specifiedOption = _normalizeBranchOption(option);
+        var defaultOptions = self.getDefaultOptions(specifiedOption.name);
+
+        var branchOption = {};
+        GitGraphWrapperExtention.extend(branchOption, defaultOptions);
+        GitGraphWrapperExtention.extend(branchOption, specifiedOption);
+
+        return branchOption;
+    }
 
     function _normalizeBranchOption(argument) {
         return typeof argument === 'string' ? {name: argument} : argument;

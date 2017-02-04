@@ -47,14 +47,34 @@
     _inherits(GitGraphWrapper, GitGraphWrapperExtention);
 
     GitGraphWrapperExtention.prototype.defaultOptions = function(option) {
+        this.defaultOptions = option;
         return this;
     };
 
-    GitGraphWrapperExtention.prototype.branch = function(option) {
-        GitGraphWrapper.prototype.branch.call(this, {
-            name: option
-        });
+    GitGraphWrapperExtention.prototype.getDefaultOptions = function(branchName) {
+        if (!this.defaultOptions ||
+            !('branch' in this.defaultOptions) ||
+            !(branchName in this.defaultOptions.branch)) {
+            return {name: branchName};
+        }
+
+        return this.defaultOptions.branch[branchName];
     };
+
+    GitGraphWrapperExtention.prototype.branch = function(option) {
+        var specifiedOption = _normalizeBranchOption(option);
+        var defaultOptions = this.getDefaultOptions(specifiedOption.name);
+        
+        var extendOption = {};
+        GitGraphWrapperExtention.extend(extendOption, defaultOptions);
+        GitGraphWrapperExtention.extend(extendOption, specifiedOption);
+
+        GitGraphWrapper.prototype.branch.call(this, extendOption);
+    };
+
+    function _normalizeBranchOption(argument) {
+        return typeof argument === 'string' ? {name: argument} : argument;
+    }
 
     GitGraphWrapperExtention.prototype.checkout = function() {
         if (arguments[0] === '-b') {
@@ -76,10 +96,16 @@
     GitGraphWrapperExtention.extend = function(target, source) {
         for (var key in source) {
             var sourceProperty = source[key];
-            if (sourceProperty !== null && typeof sourceProperty === 'object') {
+            var targetProperty = target[key];
+            
+            if (typeof targetProperty === 'object' &&
+                typeof sourceProperty === 'object' &&
+                sourceProperty !== null) {
+
                 GitGraphWrapperExtention.extend(target[key], sourceProperty);
             } else {
-                target[key] = source[key];
+
+                target[key] = sourceProperty;
             }
         }
     };

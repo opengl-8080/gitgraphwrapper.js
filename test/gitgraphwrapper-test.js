@@ -248,7 +248,7 @@ describe("test all", function() {
             });
         });
 
-        /*
+        //*
         describe('test default branch() method arguments definition', function() {
 
             it('if default branch option is defined, it will be used when branch() method is called.', function() {
@@ -279,13 +279,45 @@ describe("test all", function() {
                     }
                 });
             });
+
+            it('if branch() method is used with object arguments, default options is overridden.', function() {
+                // setup
+                var wrapper = new GitGraphWrapperExtention()
+                                    .defaultOptions({
+                                        branch: {
+                                            master: {
+                                                color: 'red',
+                                                commitDefaultOptions: {
+                                                    color: 'red'
+                                                }
+                                            }
+                                        }
+                                    });
+
+                spyOn(GitGraphWrapper.prototype, 'branch');
+
+                // exercise
+                wrapper.branch({
+                    name: 'master',
+                    color: 'blue'
+                });
+
+                // verify
+                expect(GitGraphWrapper.prototype.branch).toHaveBeenCalledWith({
+                    name: 'master',
+                    color: 'blue',
+                    commitDefaultOptions: {
+                        color: 'red'
+                    }
+                });
+            });
         });
         //*/
 
         describe('test extend() method', function() {
             var extend = GitGraphWrapperExtention.extend;
 
-            it('existing property is overriden and not existing property is appended.', function() {
+            it('existing property is overridden and not existing property is appended.', function() {
                 // setup
                 var target = {a: 1, b: 2};
 
@@ -420,6 +452,51 @@ describe("test all", function() {
                             bbb: 222
                         },
                         dd: 444
+                    }
+                });
+            });
+
+            it('enable to add new Object property.', function() {
+                // setup
+                var target = {
+                    a: 1
+                };
+
+                // exercise
+                extend(target, {
+                    b: {
+                        aa: 11,
+                        bb: 22
+                    }
+                });
+
+                // verify
+                expect(target).toEqual({
+                    a: 1,
+                    b: {
+                        aa: 11,
+                        bb: 22
+                    }
+                });
+            });
+
+            it('enable replace not object property to any object.', function() {
+                // setup
+                var target = {
+                    a: 1
+                };
+
+                // exercise
+                extend(target, {
+                    a: {
+                        aa: 11
+                    }
+                });
+
+                // verify
+                expect(target).toEqual({
+                    a: {
+                        aa: 11
                     }
                 });
             });

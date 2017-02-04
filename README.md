@@ -115,7 +115,7 @@ new GitGraphWrapperExtention()
 
 It is also enable to create new branch from specified other branch like `checkout('-b', 'new_branch', 'start_branch')`.
 
-More details are [usage.html](usage/usage.html).
+More details are [usage.html](usage/usage.html) and [usage.js](usage/usage.js).
 
 -----
 
@@ -230,7 +230,7 @@ new GitGraphWrapperExtention()
 
 `checkout('-b', 'new_branch', 'start_point')` のように、ブランチの起点を指定して新しいブランチを作ることもできます。
 
-詳しくは [usage.html](usage/usage.html) を参照してください。
+詳しくは [usage.html](usage/usage.html) と [usage.js](usage/usage.js) を参照してください。
 
 ## Release Note
 ### English

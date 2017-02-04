@@ -115,7 +115,59 @@ new GitGraphWrapperExtention()
 
 It is also enable to create new branch from specified other branch like `checkout('-b', 'new_branch', 'start_branch')`.
 
-More details are [usage.html](usage/usage.html) and [usage.js](usage/usage.js).
+More details are [usage.html](usage/usage.html) and [usage.js](usage/usage.js), or following method references.
+
+#### Methods
+##### defaultOptions()
+```js
+wrapper.defaultOptions({
+    branch: {
+        master: {
+            color: 'red',
+            commitDefaultOptions: {
+                color: 'red'
+            }
+        }
+    }
+});
+```
+
+You can define default `branch()` method's arguments.
+
+Using this method, implementations calling `branch()` method are keeped to clean.
+
+Please define default options for each branches.  
+An option's structure is `branch.<branch_name>.<default_options>`.
+
+##### branch()
+```js
+wrapper.branch('new_branch', 'start_branch');
+```
+
+The first argument is same as `branch()` method's argument at `GirGraph`.
+
+The second argument specifies start branch to create new branch.
+
+##### checkout()
+```js
+wrapper.checkout('-b', 'new_branch');
+wrapper.checkout('-b', 'new_branch', 'start_branch');
+```
+
+If you set `-b` at the first argument, checkout branch after craeting new branch.  
+If you don't use `-b` option, it behaves as standard `checkout()` method.
+
+The second argument is same as `checkout()` method's argument at `GitGraph`.
+
+The thrird argument specifies start branch to create new branch.
+
+##### orphanCheckout()
+```js
+wrapper.orphanCheckout('new_orphan_branch');
+```
+
+This method checkout a branch after creating an orphan branch.
+
 
 -----
 
@@ -230,7 +282,58 @@ new GitGraphWrapperExtention()
 
 `checkout('-b', 'new_branch', 'start_point')` のように、ブランチの起点を指定して新しいブランチを作ることもできます。
 
-詳しくは [usage.html](usage/usage.html) と [usage.js](usage/usage.js) を参照してください。
+詳しくは [usage.html](usage/usage.html) と [usage.js](usage/usage.js) を見るか、以下のメソッドの説明を参照してください。
+
+#### メソッドの説明
+##### defaultOptions()
+```js
+wrapper.defaultOptions({
+    branch: {
+        master: {
+            color: 'red',
+            commitDefaultOptions: {
+                color: 'red'
+            }
+        }
+    }
+});
+```
+
+`branch()` メソッドでブランチを作成したとき、デフォルトで指定するオプションを事前に定義しておくことができます。
+
+これを使うことで、実際にブランチを作るコマンドをよりシンプルに保つことができるようになります。
+
+オプションの構造は `branch.<ブランチ名>.<デフォルトオプション>` という形になります。
+
+##### branch()
+```js
+wrapper.branch('new_branch', 'start_branch');
+```
+
+第一引数は `GitGraph` の `branch()` メソッドと同じです。
+
+第二引数に、ブランチを作成するときの起点となるブランチを指定できます。
+
+##### checkout()
+```js
+wrapper.checkout('-b', 'new_branch');
+wrapper.checkout('-b', 'new_branch', 'start_branch');
+```
+
+第一引数に `-b` を指定することで、ブランチを作成した後にそのブランチを checkout できます。  
+`-b` を指定しない場合は、通常の `checkout()` メソッドと同じように動作します。
+
+第二引数は、 `GitGraph` の `checkout()` メソッドと同じです。
+
+第三引数には、起点となるブランチを指定することができます。
+
+##### orphanCheckout()
+```js
+wrapper.orphanCheckout('new_orphan_branch');
+```
+
+孤立したブランチを作成し、そのブランチを checkout します。
+
 
 ## Release Note
 ### English

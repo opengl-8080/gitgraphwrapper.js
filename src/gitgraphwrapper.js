@@ -61,7 +61,7 @@
         return this.defaultOptions.branch[branchName];
     };
 
-    GitGraphWrapperExtention.prototype.branch = function(option) {
+    GitGraphWrapperExtention.prototype.branch = function(option, startPointBranchName) {
         var specifiedOption = _normalizeBranchOption(option);
         var defaultOptions = this.getDefaultOptions(specifiedOption.name);
 
@@ -69,7 +69,12 @@
         GitGraphWrapperExtention.extend(extendOption, defaultOptions);
         GitGraphWrapperExtention.extend(extendOption, specifiedOption);
 
+        if (typeof startPointBranchName === 'string') {
+            this.checkout(startPointBranchName);
+        }
         GitGraphWrapper.prototype.branch.call(this, extendOption);
+
+        return this;
     };
 
     function _normalizeBranchOption(argument) {

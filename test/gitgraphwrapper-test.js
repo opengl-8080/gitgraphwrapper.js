@@ -258,6 +258,34 @@ describe("test all", function() {
             });
         });
 
+        describe('test branch() method', function() {
+
+            beforeEach(function() {
+                // setup
+                spyOn(GitGraphWrapper.prototype, 'branch');
+            });
+
+            it('branch() method returns itself.', function() {
+                // exercise
+                var returnValue = wrapper.branch('option');
+
+                // verfiy
+                expect(returnValue).toBe(wrapper);
+            });
+
+            it('if second argument (start-point) is specified, create new branch from start-point.', function() {
+                // setup
+                spyOn(GitGraphWrapperExtention.prototype, 'checkout');
+
+                // exercise
+                wrapper.branch('newBranchName', 'startPointBranchName');
+
+                // verify
+                expect(GitGraphWrapperExtention.prototype.checkout).toHaveBeenCalledWith('startPointBranchName');
+                expect(GitGraphWrapper.prototype.branch).toHaveBeenCalledWith({name: 'newBranchName'});
+            });
+        });
+
         describe('test default branch() method arguments definition', function() {
 
             it('if default branch option is defined, it will be used when branch() method is called.', function() {

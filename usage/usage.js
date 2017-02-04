@@ -53,6 +53,15 @@ new GitGraphWrapper({orientation: 'vertical-reverse'})
     .checkout('master')
     .merge('develop', {message: 'merge from develop'})
     .merge('orphan')
+
+    .checkout('develop')
+    .branch('topic2')
+    .checkout('topic2')
+    .commit()
+    .checkout('develop')
+    .merge('topic2')
+    .checkout('master')
+    .merge('develop')
 ;
 
 
@@ -117,4 +126,12 @@ new GitGraphWrapperExtention({
     .checkout('master')
     .merge('develop', {message: 'merge from develop'})
     .merge('orphan')
+
+    .branch('topic2', 'develop')
+    .checkout('topic2')
+    .commit('topic2')
+    .checkout('develop')
+    .merge('topic2')
+    .checkout('master')
+    .merge('develop')
 ;

@@ -136,4 +136,31 @@ describe("test all", function() {
             expect(git.branches.branchName).toBe(createdBranch);
         });
     });
+
+    describe('test merge() method', function() {
+        var returnValue, fromBranch, toBranch;
+
+        beforeEach(function() {
+            // setup
+            toBranch = {};
+            git.head = toBranch;
+
+            fromBranch = {merge: function() {}};
+            git.branches.fromBranchName = fromBranch;
+            spyOn(fromBranch, 'merge');
+
+            // exercise
+            returnValue = git.merge('fromBranchName', 'option');
+        });
+
+        it("merge() method delegates to specified branch's merge() method with arguments there are a head branch and an option.", function() {
+            // verify
+            expect(fromBranch.merge).toHaveBeenCalledWith(toBranch, 'option');
+        });
+
+        it("merge() method returns itself.", function() {
+            // verify
+            expect(returnValue).toBe(git);
+        });
+    });
 });

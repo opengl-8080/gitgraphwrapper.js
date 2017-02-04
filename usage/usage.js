@@ -17,4 +17,7 @@ new GitGraphWrapper()
     .commit()
     .checkout('develop')
     .commit()
+    .checkout('master')
+    .merge('develop', {message: 'merge from develop'})
+    .merge('orphan')
 ;

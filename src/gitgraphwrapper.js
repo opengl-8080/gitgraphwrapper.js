@@ -30,4 +30,9 @@ function GitGraphWrapper() {
         this.branches[createdBranch.name] = createdBranch;
         return this;
     };
+
+    this.merge = function(targetBranchName, option) {
+        this.branches[targetBranchName].merge(this.head, option);
+        return this;
+    };
 }

@@ -78,7 +78,7 @@ new GitGraphWrapperExtention({
             }
         }
     })
-    
+
     // create 'master' branch and checkout it.
     .checkout('-b', 'master')
     .commit()
@@ -94,6 +94,15 @@ new GitGraphWrapperExtention({
     // checkout master
     .checkout('master')
     .commit()
+
+    // create 'topic' branch from 'develop' branch and checkout 'topic' branch.
+    .checkout('-b', 'topic', 'develop')
+    .commit()
+    .commit()
+
+    // merge 'topic' into 'develop'
+    .checkout('develop')
+    .merge('topic')
 
     // create orphan branch 'orphan' and checkout it.
     .orphanCheckout('orphan')

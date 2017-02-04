@@ -64,7 +64,7 @@
     GitGraphWrapperExtention.prototype.branch = function(option) {
         var specifiedOption = _normalizeBranchOption(option);
         var defaultOptions = this.getDefaultOptions(specifiedOption.name);
-        
+
         var extendOption = {};
         GitGraphWrapperExtention.extend(extendOption, defaultOptions);
         GitGraphWrapperExtention.extend(extendOption, specifiedOption);
@@ -78,6 +78,10 @@
 
     GitGraphWrapperExtention.prototype.checkout = function() {
         if (arguments[0] === '-b') {
+            if (2 < arguments.length) {
+                this.checkout(arguments[2]);
+            }
+
             this.branch(arguments[1]);
         }
 

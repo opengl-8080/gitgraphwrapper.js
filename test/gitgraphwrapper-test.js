@@ -196,6 +196,14 @@ describe("test all", function() {
                 spyOn(GitGraphWrapper.prototype, 'checkout');
             });
 
+            it("checkout() method returns itself.", function() {
+                // exercise
+                var returnValue = wrapper.checkout('branchName');
+
+                // verify
+                expect(returnValue).toBe(wrapper);
+            });
+
             it("call checkout() method with '-b' option then branch() and checkout() methods are called.", function() {
                 // exercise
                 wrapper.checkout('-b', 'branchName');
@@ -214,12 +222,14 @@ describe("test all", function() {
                 expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
             });
 
-            it("checkout() method returns itself.", function() {
+            it("if '-b' and third argument (start_point) is specified, create new branch from start_point.", function() {
                 // exercise
-                var returnValue = wrapper.checkout('branchName');
+                wrapper.checkout('-b', 'newBranchName', 'startPointBranchName');
 
                 // verify
-                expect(returnValue).toBe(wrapper);
+                expect(GitGraphWrapper.prototype.checkout.calls.argsFor(0)).toEqual(['startPointBranchName']);
+                expect(GitGraphWrapperExtention.prototype.branch).toHaveBeenCalledWith('newBranchName');
+                expect(GitGraphWrapper.prototype.checkout.calls.argsFor(1)).toEqual(['newBranchName']);
             });
         });
 
@@ -248,7 +258,6 @@ describe("test all", function() {
             });
         });
 
-        //*
         describe('test default branch() method arguments definition', function() {
 
             it('if default branch option is defined, it will be used when branch() method is called.', function() {
@@ -312,7 +321,6 @@ describe("test all", function() {
                 });
             });
         });
-        //*/
 
         describe('test extend() method', function() {
             var extend = GitGraphWrapperExtention.extend;

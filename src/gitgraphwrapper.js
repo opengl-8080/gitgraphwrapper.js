@@ -46,6 +46,16 @@
 
     _inherits(GitGraphWrapper, GitGraphWrapperExtention);
 
+    GitGraphWrapperExtention.prototype.defaultOptions = function(option) {
+        return this;
+    };
+
+    GitGraphWrapperExtention.prototype.branch = function(option) {
+        GitGraphWrapper.prototype.branch.call(this, {
+            name: option
+        });
+    };
+
     GitGraphWrapperExtention.prototype.checkout = function() {
         if (arguments[0] === '-b') {
             this.branch(arguments[1]);
@@ -62,6 +72,18 @@
         this.checkout(branchName);
         return this;
     };
+
+    GitGraphWrapperExtention.extend = function(target, source) {
+        for (var key in source) {
+            var sourceProperty = source[key];
+            if (sourceProperty !== null && typeof sourceProperty === 'object') {
+                GitGraphWrapperExtention.extend(target[key], sourceProperty);
+            } else {
+                target[key] = source[key];
+            }
+        }
+    };
+
 
     function _inherits(SuperClass, SubClass) {
         var f = function() {};

@@ -247,5 +247,182 @@ describe("test all", function() {
                 expect(returnValue).toBe(wrapper);
             });
         });
+
+        /*
+        describe('test default branch() method arguments definition', function() {
+
+            it('if default branch option is defined, it will be used when branch() method is called.', function() {
+                // setup
+                var wrapper = new GitGraphWrapperExtention()
+                                    .defaultOptions({
+                                        branch: {
+                                            master: {
+                                                color: 'red',
+                                                commitDefaultOptions: {
+                                                    color: 'red'
+                                                }
+                                            }
+                                        }
+                                    });
+
+                spyOn(GitGraphWrapper.prototype, 'branch');
+
+                // exercise
+                wrapper.branch('master');
+
+                // verify
+                expect(GitGraphWrapper.prototype.branch).toHaveBeenCalledWith({
+                    name: 'master',
+                    color: 'red',
+                    commitDefaultOptions: {
+                        color: 'red'
+                    }
+                });
+            });
+        });
+        //*/
+
+        describe('test extend() method', function() {
+            var extend = GitGraphWrapperExtention.extend;
+
+            it('existing property is overriden and not existing property is appended.', function() {
+                // setup
+                var target = {a: 1, b: 2};
+
+                // exercise
+                extend(target, {b: 3, c: 4});
+
+                // verify
+                expect(target).toEqual({a: 1, b: 3, c: 4});
+            });
+
+            it('if property is undefined, copy as is.', function() {
+                // setup
+                var target = {
+                    a: 10,
+                    b: undefined
+                };
+
+                // exercise
+                extend(target, {
+                    a: undefined,
+                    c: undefined
+                });
+
+                // verify
+                expect(target).toEqual({
+                    a: undefined,
+                    b: undefined,
+                    c: undefined
+                });
+            });
+
+            it('if property is null, copy as is.', function() {
+                // setup
+                var target = {
+                    a: 10,
+                    b: null
+                };
+
+                // exercise
+                extend(target, {
+                    a: null,
+                    c: null
+                });
+
+                // verify
+                expect(target).toEqual({
+                    a: null,
+                    b: null,
+                    c: null
+                });
+            });
+
+            it('if property is Function, copy as is.', function() {
+                // setup
+                var target = {
+                    func: function() {return 'original';}
+                };
+
+                // exercise
+                extend(target, {
+                    func: function() {return 'override';}
+                });
+
+                // verify
+                expect(target.func()).toBe('override');
+            });
+
+            it('if property is Arrary, copy as is.', function() {
+                // setup
+                var target = {
+                    a: 1,
+                    b: [1, 2, {aa: 10, bb: 20}],
+                    c: {
+                        aaa: 100,
+                        bbb: [9, 8, 7]
+                    }
+                };
+
+                // exercise
+                extend(target, {
+                    b: [10, 20, {aa: 11, bb: 22}],
+                    c: {
+                        bbb: [1, 2, 3],
+                        ccc: 300
+                    }
+                });
+
+                // verify
+                expect(target).toEqual({
+                    a: 1,
+                    b: [10, 20, {aa: 11, bb: 22}],
+                    c: {
+                        aaa: 100,
+                        bbb: [1, 2, 3],
+                        ccc: 300
+                    }
+                });
+            });
+
+            it('if property is Object, copy as recursively.', function() {
+                // setup
+                var target = {
+                    a: 1,
+                    b: {
+                        aa: 10,
+                        bb: 20,
+                        cc: {
+                            aaa: 100
+                        }
+                    }
+                };
+
+                // exercise
+                extend(target, {
+                    b: {
+                        aa: "11",
+                        cc: {
+                            bbb: 222
+                        },
+                        dd: 444
+                    }
+                });
+
+                // verify
+                expect(target).toEqual({
+                    a: 1,
+                    b: {
+                        aa: "11",
+                        bb: 20,
+                        cc: {
+                            aaa: 100,
+                            bbb: 222
+                        },
+                        dd: 444
+                    }
+                });
+            });
+        });
     });
 });

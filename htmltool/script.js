@@ -99,6 +99,9 @@
       if (config.commitDotColor) {
         template.commit.dot.color = config.commitDotColor;
       }
+      if (config.commitDotSize) {
+        template.commit.dot.size = config.commitDotSize;
+      }
 
       return template;
     }
@@ -260,7 +263,8 @@
       commitSpacingY: '',
       commitWidthExtension: '',
       commitColor: '',
-      commitDotColor: ''
+      commitDotColor: '',
+      commitDotSize: ''
     };
 
     var _elements = {};

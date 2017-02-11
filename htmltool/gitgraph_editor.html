@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitGraph Editor</title>
+    <link rel="stylesheet" href="./gitgraph.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="target"></div>
+    <div id="bottom-area">
+      <div id="editor-area">
+        <textarea id="editor"></textarea>
+      </div>
+      <div id="config-area">
+        <h4>Settings</h4>
+
+        <div class="config-item">
+          <label>orientation : 
+            <select id="orientation">
+              <option value="vertical">vertical</option>
+              <option value="vertical-reverse">vertical-reverse</option>
+              <option value="horizontal">horizontal</option>
+              <option value="horizontal-reverse">horizontal-reverse</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="config-item">
+          <label>mode : 
+            <select id="mode">
+              <option value="">default</option>
+              <option value="compact">compact</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <script src="./gitgraph.min.js"></script>
+    <script src="../build/gitgraphwrapper.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

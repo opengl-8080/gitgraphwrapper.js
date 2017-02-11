@@ -315,6 +315,7 @@ wrapper.branch('new_branch', 'start_branch');
 - v1.1.0
     - Remove `"-b"` option from `checkout()` method. (#3)
     - Remove `orphanCheckout()` method. (#3)
+    - Add `delete()` method. (#2)
 - v1.0.0
     - first release
 
@@ -322,5 +323,6 @@ wrapper.branch('new_branch', 'start_branch');
 - V1.1.0
     - `checkout()` メソッドから `"-b"` オプションを削除 (#3)
     - `orphanCheckout()` メソッドを削除 (#3)
+    - `delete()` メソッドを追加 (#2)
 - v1.0.0
     - 初回リリース

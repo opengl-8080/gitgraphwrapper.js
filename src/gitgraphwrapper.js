@@ -11,6 +11,11 @@
         return this;
     };
 
+    GitGraphWrapper.prototype.delete = function(branchName) {
+        this.branches[branchName]['delete']();
+        return this;
+    };
+
     GitGraphWrapper.prototype.checkout = function(branchName) {
         this.head = this.branches[branchName];
         this.head.checkout();

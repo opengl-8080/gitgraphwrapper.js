@@ -42,6 +42,11 @@ topic2.commit().merge(develop);
 develop.merge(master);
 master.tag('v1.0.0')
 
+// delete merged branches.
+topic1.delete();
+topic2.delete();
+develop.delete();
+
 // create oraphan branch.
 var orphan = gitGraph.orphanBranch({
     name: 'orphan',
@@ -103,6 +108,11 @@ new GitGraphWrapper({orientation: 'vertical-reverse', elementId: 'gitGraphWrappe
     .checkout('master')
     .merge('develop')
     .tag('v1.0.0')
+
+    // delete merged branches.
+    .delete('topic1')
+    .delete('topic2')
+    .delete('develop')
 
     // create oraphan branch.
     .orphanBranch({
@@ -181,6 +191,11 @@ new GitGraphWrapperExtention({orientation: 'vertical-reverse', elementId: 'gitGr
     .checkout('master')
     .merge('develop')
     .tag('v1.0.0')
+
+    // delete merged branches.
+    .delete('topic1')
+    .delete('topic2')
+    .delete('develop')
 
     // create oraphan branch.
     .orphanBranch('orphan')

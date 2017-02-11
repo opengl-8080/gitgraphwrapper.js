@@ -21,6 +21,31 @@ describe("test all", function() {
             });
         });
 
+        describe('test delete() method', function() {
+
+            beforeEach(function() {
+                // setup
+                wrapper.branches.branchName = {delete: function() {}};
+                spyOn(wrapper.branches.branchName, 'delete');
+            });
+            
+            it('delete() method returns itself.', function() {
+                // exercise
+                var returnValue = wrapper.delete('branchName');
+
+                // verify
+                expect(returnValue).toBe(wrapper);
+            });
+
+            it("delete() method delegates specified Branch's delete() method.", function() {
+                // exercise
+                wrapper.delete('branchName');
+
+                // verify
+                expect(wrapper.branches.branchName.delete).toHaveBeenCalled();
+            });
+        });
+
         describe('test branch() method', function() {
             var createdBranch = {name: 'branchName'};
             var returnValue;

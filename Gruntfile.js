@@ -8,14 +8,14 @@ module.exports = function(grunt) {
         },
         watch: {
             files: ['<%= files.src %>', '<%= files.test %>'],
-            tasks: ['jshint', 'jasmine', 'uglify']
+            tasks: ['jshint', 'uglify', 'jasmine']
         },
         jshint: {
             files: ['<%= files.src %>']
         },
         jasmine: {
             build: {
-                src: '<%= files.src %>',
+                src: '<%= files.min %>',
                 options: {
                     specs: '<%= files.test %>',
                     helpers: '<%= files.helper %>'

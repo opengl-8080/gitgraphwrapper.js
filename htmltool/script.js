@@ -74,8 +74,12 @@
       if (config.branchMergeStyle) {
         template.branch.mergeStyle = config.branchMergeStyle;
       }
-      
-      
+      if (config.branchSpacingX) {
+        template.branch.spacingX = config.branchSpacingX;
+      }
+      if (config.branchSpacingY) {
+        template.branch.spacingY = config.branchSpacingY;
+      }
 
       return template;
     }
@@ -230,7 +234,9 @@
       arrowOffset: '',
       branchColor: '',
       branchLineWidth: '',
-      branchMergeStyle: ''
+      branchMergeStyle: '',
+      branchSpacingX: '',
+      branchSpacingY: ''
     };
 
     var _elements = {};

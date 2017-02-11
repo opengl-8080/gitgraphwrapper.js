@@ -91,6 +91,9 @@
       if (config.commitWidthExtension) {
         template.commit.widthExtension = config.commitWidthExtension;
       }
+      if (config.commitColor) {
+        template.commit.color = config.commitColor;
+      }
 
 
       return template;
@@ -251,7 +254,8 @@
       branchSpacingY: '',
       commitSpacingX: '',
       commitSpacingY: '',
-      commitWidthExtension: ''
+      commitWidthExtension: '',
+      commitColor: ''
     };
 
     var _elements = {};

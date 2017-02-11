@@ -30,9 +30,15 @@
 
     this.draw = function(commands) {
       _refreshCanvas();
+      var template = new GitGraph.Template().get(config.template);
+      
+      if (config.colors !== '') {
+        var colors = config.colors.split(',');
+        template.colors = colors;
+      }
       
       var git = new GitGraphWrapperExtention({
-        template: config.template,
+        template: template,
         reverseArrow: config.reverseArrow,
         orientation: config.orientation,
         mode: config.mode,
@@ -188,7 +194,8 @@
       orientation: 'vertical',
       mode: '',
       author: '',
-      reverseArrow: false
+      reverseArrow: false,
+      colors: ''
     };
 
     var _elements = {};

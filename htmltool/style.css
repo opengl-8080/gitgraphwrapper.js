@@ -43,6 +43,7 @@ html, body {
   width: 60%;
   height: 100%;
   float: left;
+  overflow: auto;
 }
 
 label {
@@ -51,4 +52,13 @@ label {
 
 h4 {
   margin: 0px;
+}
+
+.config-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+fieldset {
+  width: 90%;
 }

@@ -102,6 +102,10 @@
       if (config.commitDotSize) {
         template.commit.dot.size = config.commitDotSize;
       }
+      if (config.commitDotStrokeWidth) {
+        template.commit.dot.strokeWidth = config.commitDotStrokeWidth;
+      }
+
 
       return template;
     }
@@ -264,7 +268,8 @@
       commitWidthExtension: '',
       commitColor: '',
       commitDotColor: '',
-      commitDotSize: ''
+      commitDotSize: '',
+      commitDotStrokeWidth: ''
     };
 
     var _elements = {};

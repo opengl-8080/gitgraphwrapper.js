@@ -53,9 +53,13 @@
         template.colors = colors;
       }
 
+      // arrow
       template.arrow.color = config.arrowColor;
       template.arrow.size = config.arrowSize;
       template.arrow.offset = config.arrowOffset;
+
+      // branch
+      template.branch.color = config.branchColor;
 
       return template;
     }
@@ -207,7 +211,8 @@
       colors: '',
       arrowColor: '#000',
       arrowSize: 16,
-      arrowOffset: 2
+      arrowOffset: 2,
+      branchColor: '#000'
     };
 
     var _elements = {};

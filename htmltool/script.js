@@ -33,6 +33,7 @@
       
       var git = new GitGraphWrapperExtention({
         template: config.template,
+        reverseArrow: config.reverseArrow,
         orientation: config.orientation,
         mode: config.mode,
         author: config.author
@@ -186,24 +187,26 @@
       template: 'metro',
       orientation: 'vertical',
       mode: '',
-      author: ''
+      author: '',
+      reverseArrow: false
     };
 
     var _elements = {};
     for (var key in _defauls) {
-      _elements[key] = document.getElementById(key);
+      _elements[key] = new Element(document.getElementById(key));
     }
 
     var _listener = function() {};
     var _self = this;
 
     for (var key in _defauls) {
-      this[key] = _elements[key].value;
+      this[key] = _elements[key].getValue();
     }
 
     this.apply = function(obj) {
       for (var key in _defauls) {
-        _elements[key].value = this[key] = obj[key] || _defauls[key];
+        this[key] = obj[key] || _defauls[key];
+        _elements[key].setValue(this[key]);
       }
     };
 
@@ -216,17 +219,39 @@
     };
 
     for (var key in _defauls) {
-      _elements[key].addEventListener('change', _onChange);
+      _elements[key].addEventListener(_onChange);
     }
 
     function _onChange() {
       for (var key in _defauls) {
-        _self[key] = _elements[key].value;
+        _self[key] = _elements[key].getValue();
       }
 
       _listener();
     }
 
     this.reset();
+  }
+
+  function Element(e) {
+    this.getValue = function() {
+      return _isCheckbox() ? e.checked : e.value;
+    };
+
+    this.setValue = function(value) {
+      if (_isCheckbox()) {
+        e.checked = value;
+      } else {
+        e.value = value;
+      }
+    };
+
+    this.addEventListener = function(listener) {
+      e.addEventListener('change', listener);
+    };
+
+    function _isCheckbox() {
+      return e.type === 'checkbox';
+    }
   }
 })();

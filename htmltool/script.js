@@ -80,6 +80,15 @@
       if (config.branchSpacingY) {
         template.branch.spacingY = config.branchSpacingY;
       }
+      if (config.branchShowLabel) {
+        template.branch.showLabel = config.branchShowLabel === 'true';
+      }
+      if (config.branchLabelColor) {
+        template.branch.labelColor = config.branchLabelColor;
+      }
+      if (config.branchLabelFont) {
+        template.branch.labelFont = config.branchLabelFont;
+      }
 
       // commit
       if (config.commitSpacingX) {
@@ -288,6 +297,9 @@
       branchMergeStyle: '',
       branchSpacingX: '',
       branchSpacingY: '',
+      branchShowLabel: '',
+      branchLabelColor: '',
+      branchLabelFont: '',
       commitSpacingX: '',
       commitSpacingY: '',
       commitWidthExtension: '',

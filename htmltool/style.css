@@ -62,3 +62,15 @@ h4 {
 fieldset {
   width: 90%;
 }
+
+.short-input {
+  width: 45px;
+}
+
+.midium-input {
+  width: 80px;
+}
+
+input {
+  font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
+}

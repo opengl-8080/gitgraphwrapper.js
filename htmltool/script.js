@@ -54,12 +54,23 @@
       }
 
       // arrow
-      template.arrow.color = config.arrowColor;
-      template.arrow.size = config.arrowSize;
-      template.arrow.offset = config.arrowOffset;
+      if (config.arrowColor) {
+        template.arrow.color = config.arrowColor;
+      }
+      if (config.arrowSize) {
+        template.arrow.size = config.arrowSize;
+      }
+      if (config.arrowOffset) {
+        template.arrow.offset = config.arrowOffset;
+      }
 
       // branch
-      template.branch.color = config.branchColor;
+      if (config.branchColor) {
+        template.branch.color = config.branchColor;
+      }
+      if (config.branchLineWidth) {
+        template.branch.lineWidth = config.branchLineWidth;
+      }
 
       return template;
     }
@@ -209,10 +220,11 @@
       author: '',
       reverseArrow: false,
       colors: '',
-      arrowColor: '#000',
-      arrowSize: 16,
-      arrowOffset: 2,
-      branchColor: '#000'
+      arrowColor: '',
+      arrowSize: '',
+      arrowOffset: '',
+      branchColor: '',
+      branchLineWidth: ''
     };
 
     var _elements = {};

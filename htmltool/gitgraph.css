@@ -31,3 +31,8 @@
   width: 600px;
   display: none;
 }
+
+.config-item {
+  display: inline-block;
+  margin-right: 10px;
+}

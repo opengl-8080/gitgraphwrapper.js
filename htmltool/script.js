@@ -33,7 +33,8 @@
       
       var git = new GitGraphWrapperExtention({
         orientation: config.orientation,
-        mode: config.mode
+        mode: config.mode,
+        author: config.author
       });
 
       for (var i=0; i<commands.length; i++) {
@@ -182,7 +183,8 @@
   function Config() {
     var _defauls = {
       orientation: 'vertical',
-      mode: ''
+      mode: '',
+      author: ''
     };
 
     var _elements = {};

@@ -94,6 +94,9 @@
       if (config.commitColor) {
         template.commit.color = config.commitColor;
       }
+      if (config.commitShouldDisplayTooltipsInCompactMode) {
+        template.commit.shouldDisplayTooltipsInCompactMode = config.commitShouldDisplayTooltipsInCompactMode === 'true';
+      }
 
       // commit.dot
       if (config.commitDotColor) {
@@ -297,7 +300,8 @@
       commitMessageDisplayAuthor: '',
       commitMessageDisplayBranch: '',
       commitMessageDisplayHash: '',
-      commitMessageFont: ''
+      commitMessageFont: '',
+      commitShouldDisplayTooltipsInCompactMode: ''
     };
 
     var _elements = {};

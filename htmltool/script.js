@@ -81,6 +81,15 @@
         template.branch.spacingY = config.branchSpacingY;
       }
 
+      // commit
+      if (config.commitSpacingX) {
+        template.commit.spacingX = config.commitSpacingX;
+      }
+      if (config.commitSpacingY) {
+        template.commit.spacingY = config.commitSpacingY;
+      }
+
+
       return template;
     }
 
@@ -236,7 +245,9 @@
       branchLineWidth: '',
       branchMergeStyle: '',
       branchSpacingX: '',
-      branchSpacingY: ''
+      branchSpacingY: '',
+      commitSpacingX: '',
+      commitSpacingY: ''
     };
 
     var _elements = {};

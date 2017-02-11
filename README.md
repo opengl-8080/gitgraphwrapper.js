@@ -313,16 +313,16 @@ wrapper.branch('new_branch', 'start_branch');
 ## Release Note
 ### English
 - v1.1.0
-    - Remove `"-b"` option from `checkout()` method. (#3)
-    - Remove `orphanCheckout()` method. (#3)
-    - Add `delete()` method. (#2)
+    - Remove `"-b"` option from `checkout()` method. [#3](https://github.com/opengl-8080/gitgraphwrapper.js/issues/3)
+    - Remove `orphanCheckout()` method. [#3](https://github.com/opengl-8080/gitgraphwrapper.js/issues/3)
+    - Add `delete()` method. [#2](https://github.com/opengl-8080/gitgraphwrapper.js/issues/2)
 - v1.0.0
     - first release
 
 ### 日本語
 - V1.1.0
-    - `checkout()` メソッドから `"-b"` オプションを削除 (#3)
-    - `orphanCheckout()` メソッドを削除 (#3)
-    - `delete()` メソッドを追加 (#2)
+    - `checkout()` メソッドから `"-b"` オプションを削除 [#3](https://github.com/opengl-8080/gitgraphwrapper.js/issues/3)
+    - `orphanCheckout()` メソッドを削除 [#3](https://github.com/opengl-8080/gitgraphwrapper.js/issues/3)
+    - `delete()` メソッドを追加 [#2](https://github.com/opengl-8080/gitgraphwrapper.js/issues/2)
 - v1.0.0
     - 初回リリース

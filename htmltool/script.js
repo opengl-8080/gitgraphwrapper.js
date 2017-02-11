@@ -36,7 +36,7 @@
         reverseArrow: config.reverseArrow,
         orientation: config.orientation,
         mode: config.mode,
-        author: config.author
+        author: config.author === '' ? null : config.author
       });
 
       for (var i=0; i<commands.length; i++) {

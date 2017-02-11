@@ -109,6 +109,26 @@
         template.commit.dot.strokeColor = config.commitDotStrokeColor;
       }
 
+      // commit.message
+      if (config.commitMessageColor) {
+        template.commit.message.color = config.commitMessageColor;
+      }
+      if (config.commitMessageDisplay) {
+        template.commit.message.display = config.commitMessageDisplay === 'true';
+      }
+      if (config.commitMessageDisplayAuthor) {
+        template.commit.message.displayAuthor = config.commitMessageDisplayAuthor === 'true';
+      }
+      if (config.commitMessageDisplayBranch) {
+        template.commit.message.displayBranch = config.commitMessageDisplayBranch === 'true';
+      }
+      if (config.commitMessageDisplayHash) {
+        template.commit.message.displayHash = config.commitMessageDisplayHash === 'true';
+      }
+      if (config.commitMessageFont) {
+        template.commit.message.font = config.commitMessageFont;
+      }
+
       return template;
     }
 
@@ -272,7 +292,12 @@
       commitDotColor: '',
       commitDotSize: '',
       commitDotStrokeWidth: '',
-      commitDotStrokeColor: ''
+      commitMessageColor: '',
+      commitMessageDisplay: '',
+      commitMessageDisplayAuthor: '',
+      commitMessageDisplayBranch: '',
+      commitMessageDisplayHash: '',
+      commitMessageFont: ''
     };
 
     var _elements = {};

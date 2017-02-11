@@ -71,6 +71,10 @@ fieldset {
   width: 80px;
 }
 
+.large-input {
+  width: 200px;
+}
+
 input {
   font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
 }

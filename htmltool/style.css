@@ -78,3 +78,18 @@ fieldset {
 input {
   font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
 }
+
+#expand {
+  font-weight: normal;
+  color: #0045c7;
+  cursor: pointer;
+}
+
+#expand:hover {
+  color: #3e8aff;
+  text-decoration: underline;
+}
+
+#expand:active {
+  color: #002a6b;
+}

@@ -373,4 +373,16 @@
       return e.type === 'checkbox';
     }
   }
+
+  var bottomArea = document.getElementById('bottom-area');
+  var expand = document.getElementById('expand');
+  expand.addEventListener('click', function() {
+    if (bottomArea.style.height === '') {
+      bottomArea.style.height = '80%';
+      expand.innerText = 'expand↓';
+    } else {
+      bottomArea.style.height = '';
+      expand.innerText = 'expand↑';
+    }
+  });
 })();

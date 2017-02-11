@@ -95,6 +95,10 @@
         template.commit.color = config.commitColor;
       }
 
+      // commit.dot
+      if (config.commitDotColor) {
+        template.commit.dot.color = config.commitDotColor;
+      }
 
       return template;
     }
@@ -255,7 +259,8 @@
       commitSpacingX: '',
       commitSpacingY: '',
       commitWidthExtension: '',
-      commitColor: ''
+      commitColor: '',
+      commitDotColor: ''
     };
 
     var _elements = {};

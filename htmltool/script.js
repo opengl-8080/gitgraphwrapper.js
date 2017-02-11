@@ -32,6 +32,7 @@
       _refreshCanvas();
       
       var git = new GitGraphWrapperExtention({
+        template: config.template,
         orientation: config.orientation,
         mode: config.mode,
         author: config.author
@@ -182,6 +183,7 @@
 
   function Config() {
     var _defauls = {
+      template: 'metro',
       orientation: 'vertical',
       mode: '',
       author: ''

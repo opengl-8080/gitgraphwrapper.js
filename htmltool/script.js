@@ -30,15 +30,9 @@
 
     this.draw = function(commands) {
       _refreshCanvas();
-      var template = new GitGraph.Template().get(config.template);
-      
-      if (config.colors !== '') {
-        var colors = config.colors.split(',');
-        template.colors = colors;
-      }
       
       var git = new GitGraphWrapperExtention({
-        template: template,
+        template: _createTemplate(),
         reverseArrow: config.reverseArrow,
         orientation: config.orientation,
         mode: config.mode,
@@ -50,6 +44,21 @@
         command.invoke(git);
       }
     };
+
+    function _createTemplate() {
+      var template = new GitGraph.Template().get(config.template);
+      
+      if (config.colors !== '') {
+        var colors = config.colors.split(',');
+        template.colors = colors;
+      }
+
+      template.arrow.color = config.arrowColor;
+      template.arrow.size = config.arrowSize;
+      template.arrow.offset = config.arrowOffset;
+
+      return template;
+    }
 
     function _refreshCanvas() {
       _removeCurrentCanvas();
@@ -195,7 +204,10 @@
       mode: '',
       author: '',
       reverseArrow: false,
-      colors: ''
+      colors: '',
+      arrowColor: '#000',
+      arrowSize: 16,
+      arrowOffset: 2
     };
 
     var _elements = {};
@@ -242,7 +254,13 @@
 
   function Element(e) {
     this.getValue = function() {
-      return _isCheckbox() ? e.checked : e.value;
+      if (_isCheckbox()) {
+        return e.checked;
+      } else if (e.type === 'number') {
+        return Number(e.value);
+      } else {
+        return e.value;
+      }
     };
 
     this.setValue = function(value) {

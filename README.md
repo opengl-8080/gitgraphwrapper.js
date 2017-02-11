@@ -5,7 +5,7 @@
 Simple [gitgraph.js](https://github.com/nicoespeon/gitgraph.js) wrapper that seemed more like a command line.
 
 ## Example
-![example](./img/example.jpg)
+![example](./img/example.png)
 
 If you draw an above graph with gitgraph.js as is, implementation is following.
 
@@ -15,6 +15,9 @@ var gitGraph = new GitGraph();
 
 var master = gitGraph.branch('master');
 master.commit().tag('v0.0.0');
+
+var other = gitGraph.branch('other');
+other.commit();
 
 var topic = master.branch('topic');
 topic.commit().commit().merge(master);
@@ -28,12 +31,14 @@ Drawing same graph using this wrapper is following.
 // GitGraphWrapper
 new GitGraphWrapper()
     .branch('master')
-    .checkout('master')
     .commit()
     .tag('v0.0.0')
 
+    .branch('other')
+    .commit()
+
+    .checkout('master')
     .branch('topic')
-    .checkout('topic')
     .commit()
     .commit()
 
@@ -54,9 +59,11 @@ $ git commit ...
 
 $ git tag v0.0.0
 
-$ git branch topic
+$ git checkout -b other
 
-$ git checkout topic
+$ git commit ...
+
+$ git checkout -b topic master
 
 $ git commit ...
 
@@ -81,12 +88,12 @@ GitGraphWrapper is simple wrapper for GitGraph.
 Method arguments is compatible with GitGraph's method arguments.
 
 But unfortunately, as a result some operations are redundant.  
-For example, making branch with `branch()` method and moving HEAD with `checkout()` method.
+For example, to create a new branch 'topic' from 'master' if HEAD is not 'master', you must call `checkout("master")` and `branch("topic")`.
 
 Usally you may execute git command as following.
 
 ```bash
-$ git checkout -b branch_name
+$ git branch topic master
 ```
 
 `GitGraphWrapperExtention` extends `GitGraphWrapper` and lets implementations like above.
@@ -99,11 +106,14 @@ For example, like followings.
 ```js
 // GitGraphWrapperExtention
 new GitGraphWrapperExtention()
-    .checkout('-b', 'master')
+    .branch('master')
     .commit()
     .tag('v0.0.0')
+
+    .branch('other')
+    .commit()
     
-    .checkout('-b', 'topic')
+    .branch('topic', 'master')
     .commit()
     .commit()
 
@@ -112,8 +122,6 @@ new GitGraphWrapperExtention()
     .tag('v1.0.0')
 ;
 ```
-
-It is also enable to create new branch from specified other branch like `checkout('-b', 'new_branch', 'start_branch')`.
 
 More details are [usage.html](usage/usage.html) and [usage.js](usage/usage.js), or following method references.
 
@@ -148,26 +156,6 @@ The first argument is same as `branch()` method's argument at `GirGraph`.
 
 The second argument specifies start branch to create new branch.
 
-##### checkout()
-```js
-wrapper.checkout('-b', 'new_branch');
-wrapper.checkout('-b', 'new_branch', 'start_branch');
-```
-
-If you set `-b` at the first argument, checkout branch after craeting new branch.  
-If you don't use `-b` option, it behaves as standard `checkout()` method.
-
-The second argument is same as `checkout()` method's argument at `GitGraph`.
-
-The thrird argument specifies start branch to create new branch.
-
-##### orphanCheckout()
-```js
-wrapper.orphanCheckout('new_orphan_branch');
-```
-
-This method checkout a branch after creating an orphan branch.
-
 
 -----
 
@@ -175,7 +163,7 @@ This method checkout a branch after creating an orphan branch.
 [gitgraph.js](https://github.com/nicoespeon/gitgraph.js) をラップして、よりコマンドに近い形で実装できるようにしたものです。
 
 ## 例
-![example](./img/example.jpg)
+![example](./img/example.png)
 
 例えば上のようなグラフを描こうとした場合、 girgraph.js をそのまま使うと次のようになります。
 
@@ -185,6 +173,9 @@ var gitGraph = new GitGraph();
 
 var master = gitGraph.branch('master');
 master.commit().tag('v0.0.0');
+
+var other = gitGraph.branch('other');
+other.commit();
 
 var topic = master.branch('topic');
 topic.commit().commit().merge(master);
@@ -198,12 +189,14 @@ master.tag('v1.0.0');
 // GitGraphWrapper
 new GitGraphWrapper()
     .branch('master')
-    .checkout('master')
     .commit()
     .tag('v0.0.0')
 
+    .branch('other')
+    .commit()
+
+    .checkout('master')
     .branch('topic')
-    .checkout('topic')
     .commit()
     .commit()
 
@@ -224,9 +217,11 @@ $ git commit ...
 
 $ git tag v0.0.0
 
-$ git branch topic
+$ git checkout -b other
 
-$ git checkout topic
+$ git commit ...
+
+$ git checkout -b topic master
 
 $ git commit ...
 
@@ -251,9 +246,9 @@ $ git tag v1.0.0
 メソッドの引数は、基本的に `GitGraph` のメソッドと互換性を持つようにしています。
 
 しかし、その結果として一部の操作が冗長になっています。  
-たとえば、 `branch()` でブランチを作ってから `checkout()` で HEAD を移動させるところなどです。
+たとえば、 HEAD が 'master' ではない状態で 'master' から 'topic' ブランチを作成しようと思うと、 `chekcout("master")` をしてから `branch("topic")` をしなければなりません。
 
-普通、コマンドラインでそのような操作をするときは `git checkout -b branch_name` とすると思います。
+普通、コマンドラインでそのような操作をするときは `git branch topic master` とすると思います。
 
 `GitGraphWrapperExtention` は、 `GitGraphWrapper` を拡張して似たようなことをできるようにします。
 
@@ -264,11 +259,14 @@ $ git tag v1.0.0
 ```js
 // GitGraphWrapperExtention
 new GitGraphWrapperExtention()
-    .checkout('-b', 'master')
+    .branch('master')
     .commit()
     .tag('v0.0.0')
+
+    .branch('other')
+    .commit()
     
-    .checkout('-b', 'topic')
+    .branch('topic', 'master')
     .commit()
     .commit()
 
@@ -279,8 +277,6 @@ new GitGraphWrapperExtention()
 ```
 
 かなりコマンドラインでの実行に近い形になっているかと思います。
-
-`checkout('-b', 'new_branch', 'start_point')` のように、ブランチの起点を指定して新しいブランチを作ることもできます。
 
 詳しくは [usage.html](usage/usage.html) と [usage.js](usage/usage.js) を見るか、以下のメソッドの説明を参照してください。
 
@@ -314,32 +310,17 @@ wrapper.branch('new_branch', 'start_branch');
 
 第二引数に、ブランチを作成するときの起点となるブランチを指定できます。
 
-##### checkout()
-```js
-wrapper.checkout('-b', 'new_branch');
-wrapper.checkout('-b', 'new_branch', 'start_branch');
-```
-
-第一引数に `-b` を指定することで、ブランチを作成した後にそのブランチを checkout できます。  
-`-b` を指定しない場合は、通常の `checkout()` メソッドと同じように動作します。
-
-第二引数は、 `GitGraph` の `checkout()` メソッドと同じです。
-
-第三引数には、起点となるブランチを指定することができます。
-
-##### orphanCheckout()
-```js
-wrapper.orphanCheckout('new_orphan_branch');
-```
-
-孤立したブランチを作成し、そのブランチを checkout します。
-
-
 ## Release Note
 ### English
+- v1.1.0
+    - Remove `"-b"` option from `checkout()` method. (#3)
+    - Remove `orphanCheckout()` method. (#3)
 - v1.0.0
     - first release
 
 ### 日本語
+- V1.1.0
+    - `checkout()` メソッドから `"-b"` オプションを削除 (#3)
+    - `orphanCheckout()` メソッドを削除 (#3)
 - v1.0.0
     - 初回リリース

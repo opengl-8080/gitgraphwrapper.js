@@ -95,25 +95,18 @@
         return typeof argument === 'string' ? {name: argument} : argument;
     }
 
-    GitGraphWrapperExtention.prototype.checkout = function() {
+    GitGraphWrapperExtention.prototype.checkout = function(branchName) {
         if (arguments[0] === '-b') {
-            if (2 < arguments.length) {
-                this.checkout(arguments[2]);
-            }
-
-            this.branch(arguments[1]);
+            throw "'-b' option was removed. You can change HEAD just using the branch() method.";
         }
 
-        var branchName = (1 < arguments.length) ? arguments[1] : arguments[0];
         GitGraphWrapper.prototype.checkout.call(this, branchName);
 
         return this;
     };
 
-    GitGraphWrapperExtention.prototype.orphanCheckout = function(branchName) {
-        this.orphanBranch(branchName);
-        this.checkout(branchName);
-        return this;
+    GitGraphWrapperExtention.prototype.orphanCheckout = function() {
+        throw "orphanCheckout() method is removed. You can change HEAD just using the orphanBranch() method.";
     };
 
     GitGraphWrapperExtention.extend = function(target, source) {

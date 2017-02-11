@@ -196,6 +196,22 @@ describe("test all", function() {
                 spyOn(GitGraphWrapper.prototype, 'checkout');
             });
 
+            it("checkout() method delegates to parent checkout() method.", function() {
+                // exercise
+                wrapper.checkout('branchName');
+
+                // verify
+                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
+            });
+
+            it("checkout() method delegates to parent checkout() method. (multiple parameters)", function() {
+                // exercise
+                wrapper.checkout('branchName', 'ignore parameter');
+
+                // verify
+                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
+            });
+
             it("checkout() method returns itself.", function() {
                 // exercise
                 var returnValue = wrapper.checkout('branchName');
@@ -204,57 +220,20 @@ describe("test all", function() {
                 expect(returnValue).toBe(wrapper);
             });
 
-            it("call checkout() method with '-b' option then branch() and checkout() methods are called.", function() {
-                // exercise
-                wrapper.checkout('-b', 'branchName');
-
+            it("if checkout() method is called with '-b' option, exception is thrown with description message.", function() {
                 // verify
-                expect(GitGraphWrapperExtention.prototype.branch).toHaveBeenCalledWith('branchName');
-                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
-            });
-
-            it("call checkout() method without '-b' option then checkout() method is only called.", function() {
-                // exercise
-                wrapper.checkout('branchName');
-
-                // verify
-                expect(GitGraphWrapperExtention.prototype.branch.calls.count()).toBe(0);
-                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
-            });
-
-            it("if '-b' and third argument (start_point) is specified, create new branch from start_point.", function() {
-                // exercise
-                wrapper.checkout('-b', 'newBranchName', 'startPointBranchName');
-
-                // verify
-                expect(GitGraphWrapper.prototype.checkout.calls.argsFor(0)).toEqual(['startPointBranchName']);
-                expect(GitGraphWrapperExtention.prototype.branch).toHaveBeenCalledWith('newBranchName');
-                expect(GitGraphWrapper.prototype.checkout.calls.argsFor(1)).toEqual(['newBranchName']);
+                expect(function() {
+                    // exercise
+                    wrapper.checkout('-b');
+                }).toThrow("'-b' option was removed. You can change HEAD just using the branch() method.");
             });
         });
 
         describe('test orphanCheckout() method', function() {
-            beforeEach(function() {
-                // setup
-                spyOn(GitGraphWrapperExtention.prototype, 'orphanBranch');
-                spyOn(GitGraphWrapper.prototype, 'checkout');
-            });
-
-            it("call orphanCheckout() method then orphanBranch() and checkout() methods are called.", function() {
-                // exercise
-                wrapper.orphanCheckout('branchName');
-
+            it("if orphanCheckout() method is called, exception is thrown with description message.", function() {
                 // verify
-                expect(GitGraphWrapperExtention.prototype.orphanBranch).toHaveBeenCalledWith('branchName');
-                expect(GitGraphWrapper.prototype.checkout).toHaveBeenCalledWith('branchName');
-            });
-
-            it("orphanCheckout() method returns itself.", function() {
-                // exercise
-                var returnValue = wrapper.orphanCheckout('branchName');
-
-                // verify
-                expect(returnValue).toBe(wrapper);
+                expect(wrapper.orphanCheckout)
+                    .toThrow('orphanCheckout() method is removed. You can change HEAD just using the orphanBranch() method.');
             });
         });
 

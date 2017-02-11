@@ -88,6 +88,9 @@
       if (config.commitSpacingY) {
         template.commit.spacingY = config.commitSpacingY;
       }
+      if (config.commitWidthExtension) {
+        template.commit.widthExtension = config.commitWidthExtension;
+      }
 
 
       return template;
@@ -247,7 +250,8 @@
       branchSpacingX: '',
       branchSpacingY: '',
       commitSpacingX: '',
-      commitSpacingY: ''
+      commitSpacingY: '',
+      commitWidthExtension: ''
     };
 
     var _elements = {};

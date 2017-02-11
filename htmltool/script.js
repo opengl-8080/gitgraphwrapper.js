@@ -71,6 +71,11 @@
       if (config.branchLineWidth) {
         template.branch.lineWidth = config.branchLineWidth;
       }
+      if (config.branchMergeStyle) {
+        template.branch.mergeStyle = config.branchMergeStyle;
+      }
+      
+      
 
       return template;
     }
@@ -224,7 +229,8 @@
       arrowSize: '',
       arrowOffset: '',
       branchColor: '',
-      branchLineWidth: ''
+      branchLineWidth: '',
+      branchMergeStyle: ''
     };
 
     var _elements = {};

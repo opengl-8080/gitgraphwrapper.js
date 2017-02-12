@@ -63,8 +63,18 @@
           }
 
           if (value !== '') {
+            var commitDefaultOptionRegExp = /^commitDefaultOptions_(.*)$/.exec(optionName);
+
             if (optionName === 'showLabel') {
               branchDefaultOptions[branchName][optionName] = value === 'true';
+            } if (commitDefaultOptionRegExp) {
+              var optName = commitDefaultOptionRegExp[1];
+
+              if (!('commitDefaultOptions' in branchDefaultOptions[branchName])) {
+                branchDefaultOptions[branchName].commitDefaultOptions = {};
+              }
+
+              branchDefaultOptions[branchName].commitDefaultOptions[optName] = value;
             } else {
               branchDefaultOptions[branchName][optionName] = value;
             }
@@ -386,6 +396,7 @@
       _initElement('branch_' + name + '_color');
       _initElement('branch_' + name + '_lineWidth');
       _initElement('branch_' + name + '_showLabel');
+      _initElement('branch_' + name + '_commitDefaultOptions_color');
     };
 
     this.removeBranchOption = function(name) {

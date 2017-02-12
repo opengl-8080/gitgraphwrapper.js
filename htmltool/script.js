@@ -343,21 +343,23 @@
 
     this.apply = function(obj) {
       for (var key in _defaults) {
-        this[key] = obj[key] || _defaults[key];
-        _elements[key].setValue(this[key]);
+        _setValue(key, obj[key] || _defaults[key]);
       }
 
       for (var key in obj) {
         var matchResult = /^branch_([^_]+)_.*$/.exec(key);
         if (matchResult) {
-          _defaults['branch_' + matchResult[1] + '_color'] = '';
           _addBranchOptionArea(matchResult[1]);
           _initElement(key);
-          this[key] = obj[key];
-          _elements[key].setValue(this[key]);
+          _setValue(key, obj[key]);
         }
       }
     };
+
+    function _setValue(key, value) {
+      _self[key] = value;
+      _elements[key].setValue(_self[key]);
+    }
 
     this.reset = function() {
       this.apply(_defaults);
@@ -368,19 +370,12 @@
     };
 
     this.addBranchOption = function(name) {
-      _defaults['branch_' + name + '_color'] = '';
-
-      for (var key in _defaults) {
-        if (new RegExp('^branch_' + name, 'g').test(key)) {
-          _initElement(key);
-        }
-      }
+      _initElement('branch_' + name + '_color');
     };
 
     this.removeBranchOption = function(name) {
-      for (var key in _defaults) {
+      for (var key in _elements) {
         if (new RegExp('^branch_' + name).test(key)) {
-          delete _defaults[key];
           delete this[key];
           delete _elements[key];
         }
@@ -394,7 +389,7 @@
     }
 
     function _onChange() {
-      for (var key in _defaults) {
+      for (var key in _elements) {
         _self[key] = _elements[key].getValue();
       }
 

@@ -299,7 +299,7 @@
 
 
   function Config() {
-    var _defauls = {
+    var _defaults = {
       template: 'metro',
       orientation: 'vertical',
       mode: '',
@@ -337,19 +337,20 @@
     var _listener = function() {};
     var _self = this;
 
-    for (var key in _defauls) {
+    for (var key in _defaults) {
       _initElement(key);
     }
 
     this.apply = function(obj) {
-      for (var key in _defauls) {
-        this[key] = obj[key] || _defauls[key];
+      for (var key in _defaults) {
+        this[key] = obj[key] || _defaults[key];
         _elements[key].setValue(this[key]);
       }
 
       for (var key in obj) {
         var matchResult = /^branch_([^_]+)_.*$/.exec(key);
         if (matchResult) {
+          _defaults['branch_' + matchResult[1] + '_color'] = '';
           _addBranchOptionArea(matchResult[1]);
           _initElement(key);
           this[key] = obj[key];
@@ -359,7 +360,7 @@
     };
 
     this.reset = function() {
-      this.apply(_defauls);
+      this.apply(_defaults);
     };
 
     this.setListener = function(listener) {
@@ -367,11 +368,21 @@
     };
 
     this.addBranchOption = function(name) {
-      _defauls['branch_' + name + '_color'] = '';
+      _defaults['branch_' + name + '_color'] = '';
 
-      for (var key in _defauls) {
+      for (var key in _defaults) {
         if (new RegExp('^branch_' + name, 'g').test(key)) {
           _initElement(key);
+        }
+      }
+    };
+
+    this.removeBranchOption = function(name) {
+      for (var key in _defaults) {
+        if (new RegExp('^branch_' + name).test(key)) {
+          delete _defaults[key];
+          delete this[key];
+          delete _elements[key];
         }
       }
     };
@@ -383,7 +394,7 @@
     }
 
     function _onChange() {
-      for (var key in _defauls) {
+      for (var key in _defaults) {
         _self[key] = _elements[key].getValue();
       }
 
@@ -460,5 +471,12 @@
     div.innerHTML = html;
 
     newBranchesTarget.appendChild(div);
+
+    var removeButton = document.getElementById(name + '_remove');
+    removeButton.addEventListener('click', function() {
+      newBranchesTarget.removeChild(div);
+      config.removeBranchOption(name);
+      draw();
+    });
   }
 })();

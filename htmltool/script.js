@@ -61,7 +61,14 @@
           if (!(branchName in branchDefaultOptions)) {
             branchDefaultOptions[branchName] = {};
           }
-          branchDefaultOptions[branchName][optionName] = value;
+
+          if (value !== '') {
+            if (optionName === 'showLabel') {
+              branchDefaultOptions[branchName][optionName] = value === 'true';
+            } else {
+              branchDefaultOptions[branchName][optionName] = value;
+            }
+          }
         }
       }
 
@@ -378,6 +385,7 @@
     this.addBranchOption = function(name) {
       _initElement('branch_' + name + '_color');
       _initElement('branch_' + name + '_lineWidth');
+      _initElement('branch_' + name + '_showLabel');
     };
 
     this.removeBranchOption = function(name) {

@@ -397,6 +397,7 @@
       _initElement('branch_' + name + '_lineWidth');
       _initElement('branch_' + name + '_showLabel');
       _initElement('branch_' + name + '_commitDefaultOptions_color');
+      _initElement('branch_' + name + '_commitDefaultOptions_messageColor');
     };
 
     this.removeBranchOption = function(name) {

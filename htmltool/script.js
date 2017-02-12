@@ -377,6 +377,7 @@
 
     this.addBranchOption = function(name) {
       _initElement('branch_' + name + '_color');
+      _initElement('branch_' + name + '_lineWidth');
     };
 
     this.removeBranchOption = function(name) {

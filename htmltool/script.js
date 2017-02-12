@@ -39,6 +39,23 @@
         author: config.author === '' ? null : config.author
       });
 
+      var branchDefaultOptions = {};
+      for (var key in config) {
+        if (/^branch_/.test(key)) {
+          var value = config[key];
+          var matchResult = /_([^_]+)_(.*)/.exec(key);
+          var branchName = matchResult[1];
+          var optionName = matchResult[2];
+          if (!(branchName in branchDefaultOptions)) {
+            branchDefaultOptions[branchName] = {};
+          }
+          branchDefaultOptions[branchName][optionName] = value;
+        }
+      }
+      git.defaultOptions({
+        branch: branchDefaultOptions
+      });
+
       for (var i=0; i<commands.length; i++) {
         var command = commands[i];
         command.invoke(git);
@@ -317,21 +334,27 @@
     };
 
     var _elements = {};
-    for (var key in _defauls) {
-      _elements[key] = new Element(document.getElementById(key));
-    }
-
     var _listener = function() {};
     var _self = this;
 
     for (var key in _defauls) {
-      this[key] = _elements[key].getValue();
+      _initElement(key);
     }
 
     this.apply = function(obj) {
       for (var key in _defauls) {
         this[key] = obj[key] || _defauls[key];
         _elements[key].setValue(this[key]);
+      }
+
+      for (var key in obj) {
+        var matchResult = /^branch_([^_]+)_.*$/.exec(key);
+        if (matchResult) {
+          _addBranchOptionArea(matchResult[1]);
+          _initElement(key);
+          this[key] = obj[key];
+          _elements[key].setValue(this[key]);
+        }
       }
     };
 
@@ -343,8 +366,20 @@
       _listener = listener;
     };
 
-    for (var key in _defauls) {
-      _elements[key].addEventListener(_onChange);
+    this.addBranchOption = function(name) {
+      _defauls['branch_' + name + '_color'] = '';
+
+      for (var key in _defauls) {
+        if (new RegExp('^branch_' + name, 'g').test(key)) {
+          _initElement(key);
+        }
+      }
+    };
+
+    function _initElement(elementId) {
+      _elements[elementId] = new Element(document.getElementById(elementId));
+      _elements[elementId].addEventListener(_onChange);
+      _self[key] = _elements[elementId].getValue();
     }
 
     function _onChange() {
@@ -397,4 +432,33 @@
       expand.innerText = 'expand↑';
     }
   });
+
+
+  var newBranchName = document.getElementById('newBranchName');
+
+  document.getElementById('addNewBranchOptionButton').addEventListener('click', function() {
+    var name = newBranchName.value;
+
+    _addBranchOptionArea(name);
+
+    config.addBranchOption(name);
+  });
+
+  function _addBranchOptionArea(name) {
+    // skip if aleady exists
+    if (document.getElementById(name)) {
+      return;
+    }
+
+    var newBranchesTarget = document.getElementById('newBranchesTarget');
+
+    var newBranchOptionTemplate = document.getElementById('newBranchOptionTemplate');
+    var html = newBranchOptionTemplate.innerText;
+    html = html.replace(/\${name}/g, name);
+
+    var div = document.createElement('div');
+    div.innerHTML = html;
+
+    newBranchesTarget.appendChild(div);
+  }
 })();

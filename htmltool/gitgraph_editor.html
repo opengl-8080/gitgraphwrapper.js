@@ -247,9 +247,25 @@
             </fieldset>
           </fieldset>
         </fieldset>
+
+        <fieldset>
+          <legend>Branch options</legend>
+          <input type="text" id="newBranchName" /> <button id="addNewBranchOptionButton">add</button>
+          <div id="newBranchesTarget"></div>
+        </fieldset>
       </div>
     </div>
 
+    <script id="newBranchOptionTemplate" type="text/html">
+      <fieldset id="${name}">
+        <legend>${name}</legend>
+        
+        <div class="config-item">
+          <label for="branch_${name}_color">color</label>
+          <input type="text" id="branch_${name}_color" class="midium-input" placeholder="#000" />
+        </div>
+      </fieldset>
+    </script>
     <script src="./gitgraph.min.js"></script>
     <script src="../build/gitgraphwrapper.min.js"></script>
     <script src="./script.js"></script>

@@ -394,7 +394,7 @@
     function _initElement(elementId) {
       _elements[elementId] = new Element(document.getElementById(elementId));
       _elements[elementId].addEventListener(_onChange);
-      _self[key] = _elements[elementId].getValue();
+      _self[elementId] = _elements[elementId].getValue();
     }
 
     function _onChange() {
@@ -477,6 +477,8 @@
     _addBranchOptionArea(name);
 
     config.addBranchOption(name);
+
+    draw();
   });
 
   function _rebuildBranchOption(storage) {

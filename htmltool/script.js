@@ -8,6 +8,7 @@
   editor.setListener(draw);
 
   var config = new Config();
+  _rebuildBranchOption(storage);
   config.apply(storage.getConfigObj());
   config.setListener(draw);
 
@@ -19,7 +20,6 @@
 
     storage.save(editor, config);
   }
-
 
 
 
@@ -39,21 +39,8 @@
         author: config.author === '' ? null : config.author
       });
 
-      var branchDefaultOptions = {};
-      for (var key in config) {
-        if (/^branch_/.test(key)) {
-          var value = config[key];
-          var matchResult = /_([^_]+)_(.*)/.exec(key);
-          var branchName = matchResult[1];
-          var optionName = matchResult[2];
-          if (!(branchName in branchDefaultOptions)) {
-            branchDefaultOptions[branchName] = {};
-          }
-          branchDefaultOptions[branchName][optionName] = value;
-        }
-      }
       git.defaultOptions({
-        branch: branchDefaultOptions
+        branch: _createBranchOption()
       });
 
       for (var i=0; i<commands.length; i++) {
@@ -61,6 +48,25 @@
         command.invoke(git);
       }
     };
+
+    function _createBranchOption() {
+      var branchDefaultOptions = {};
+
+      for (var key in config) {
+        var branchOptionKey = new BranchOptionKey(key);
+        if (branchOptionKey.isBranchOption()) {
+          var value = config[key];
+          var branchName = branchOptionKey.getBranchName();
+          var optionName = branchOptionKey.getOptionName();
+          if (!(branchName in branchDefaultOptions)) {
+            branchDefaultOptions[branchName] = {};
+          }
+          branchDefaultOptions[branchName][optionName] = value;
+        }
+      }
+
+      return branchDefaultOptions;
+    }
 
     function _createTemplate() {
       var template = new GitGraph.Template().get(config.template);
@@ -347,9 +353,9 @@
       }
 
       for (var key in obj) {
-        var matchResult = /^branch_([^_]+)_.*$/.exec(key);
-        if (matchResult) {
-          _addBranchOptionArea(matchResult[1]);
+        var branchOptionKey = new BranchOptionKey(key);
+
+        if (branchOptionKey.isBranchOption()) {
           _initElement(key);
           _setValue(key, obj[key]);
         }
@@ -375,7 +381,10 @@
 
     this.removeBranchOption = function(name) {
       for (var key in _elements) {
-        if (new RegExp('^branch_' + name).test(key)) {
+        var branchOptionKey = new BranchOptionKey(key);
+        var branchName = branchOptionKey.getBranchName();
+
+        if (branchOptionKey.isBranchOption() && branchName === name) {
           delete this[key];
           delete _elements[key];
         }
@@ -397,6 +406,26 @@
     }
 
     this.reset();
+  }
+
+  function BranchOptionKey(key) {
+    var _regexp = new RegExp("^branch_([^_]*)_(.*)$").exec(key);
+
+    this.getKey = function() {
+      return key;
+    };
+
+    this.getBranchName = function() {
+      return this.isBranchOption() ? _regexp[1] : null;
+    };
+
+    this.getOptionName = function() {
+      return this.isBranchOption() ? _regexp[2] : null;
+    };
+
+    this.isBranchOption = function() {
+      return !!_regexp;
+    };
   }
 
   function Element(e) {
@@ -449,6 +478,16 @@
 
     config.addBranchOption(name);
   });
+
+  function _rebuildBranchOption(storage) {
+    for (var key in storage.getConfigObj()) {
+      var branchOptionKey = new BranchOptionKey(key);
+
+      if (branchOptionKey.isBranchOption()) {
+        _addBranchOptionArea(branchOptionKey.getBranchName());
+      }
+    }
+  }
 
   function _addBranchOptionArea(name) {
     // skip if aleady exists

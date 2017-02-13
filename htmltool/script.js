@@ -82,14 +82,13 @@
     var _listener = option.listener;
     var _name = 'template';
     var _colors = new TextBox({id: _name + '_colors', name: 'colors', listener: _listener});
-    var _arrow = new ArrowTemplate({
+    var _childOption = {
       parentName: _name,
       listener: _listener
-    });
-    var _branch = new BranchTemplate({
-      parentName: _name,
-      listener: _listener
-    });
+    };
+    var _arrow = new ArrowTemplate(_childOption);
+    var _branch = new BranchTemplate(_childOption);
+    var _commit = new CommitTemplate(_childOption);
 
     this.collect = function(target) {
       _colors.collect(target, function(text) {
@@ -97,6 +96,7 @@
       });
       _arrow.collect(target);
       _branch.collect(target);
+      _commit.collect(target);
     };
   }
 
@@ -113,7 +113,7 @@
 
     this.collect = function(target) {
       if (!(_name in target)) {
-        return;
+        target[_name] = {};
       }
       _inputElements.forEach(function(inputElement) {
         inputElement.collect(target[_name]);
@@ -139,7 +139,29 @@
 
     this.collect = function(target) {
       if (!(_name in target)) {
-        return;
+        target[_name] = {};
+      }
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target[_name]);
+      });
+    };
+  }
+
+  function CommitTemplate(option) {
+    var _listener = option.listener;
+    var _parentName = option.parentName;
+    var _name = 'commit';
+    var _idPrefix = _parentName + '_' + _name;
+    var _inputElements = [
+      new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
+      new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
+      new TextBox({id: _idPrefix + '_widthExtension', name: 'widthExtension', listener: _listener}),
+      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
+    ];
+
+    this.collect = function(target) {
+      if (!(_name in target)) {
+        target[_name] = {};
       }
       _inputElements.forEach(function(inputElement) {
         inputElement.collect(target[_name]);
@@ -250,23 +272,6 @@
       var template = new GitGraph.Template().get(basicOption.template);
 
       dummyConfig.template.collect(template);
-
-      // commit
-      if (config.commitSpacingX) {
-        template.commit.spacingX = config.commitSpacingX;
-      }
-      if (config.commitSpacingY) {
-        template.commit.spacingY = config.commitSpacingY;
-      }
-      if (config.commitWidthExtension) {
-        template.commit.widthExtension = config.commitWidthExtension;
-      }
-      if (config.commitColor) {
-        template.commit.color = config.commitColor;
-      }
-      if (config.commitShouldDisplayTooltipsInCompactMode) {
-        template.commit.shouldDisplayTooltipsInCompactMode = config.commitShouldDisplayTooltipsInCompactMode === 'true';
-      }
 
       // commit.dot
       if (config.commitDotColor) {
@@ -444,10 +449,6 @@
 
   function Config() {
     var _defaults = {
-      commitSpacingX: '',
-      commitSpacingY: '',
-      commitWidthExtension: '',
-      commitColor: '',
       commitDotColor: '',
       commitDotSize: '',
       commitDotStrokeWidth: '',

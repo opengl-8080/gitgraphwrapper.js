@@ -8,14 +8,15 @@
     this.element.addEventListener('change', this.listener);
   }
 
-  InputElement.prototype.collect = function(target) {
+  InputElement.prototype.collect = function(target, mapper) {
     var value = this.element.value;
 
     if (value !== '') {
       if (this.element.type === 'number') {
         value = Number(value);
       }
-      target[this.name] = value;
+      mapper = (typeof mapper === 'function') ? mapper : function(a) {return a;};
+      target[this.name] = mapper(value);
     }
   };
 
@@ -52,6 +53,12 @@
   };
 
   BooleanSelectBox.prototype.dump = BooleanSelectBox.prototype.collect;
+
+  function DummyConfig(option) {
+    var _listener = option.listener;
+    this.basic = new BasicConfig({listener: _listener});
+    this.template = new TemplateConfig({listener: _listener});
+  }
 
   function BasicConfig(option) {
     var _listener = option.listener;
@@ -95,21 +102,23 @@
     });
 
     this.collect = function(target) {
-      _colors.collect(target);
+      _colors.collect(target, function(text) {
+        return text.replace(/ */g, '').split(',');
+      });
       _arrow.collect(target);
     };
 
     this.dump = function(target) {
-      target.template = {};
+      target[_name] = {};
 
       _inputElements.forEach(function(inputElement) {
-        inputElement.dump(target.template);
+        inputElement.dump(target[_name]);
       });
     };
 
     this.restore = function(source) {
       _inputElements.forEach(function(inputElement) {
-        inputElement.restore(source.template);
+        inputElement.restore(source[_name]);
       });
     };
   }
@@ -158,13 +167,7 @@
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-
-  var templateConfig = new TemplateConfig({
-    listener: function() {
-      draw();
-    }
-  });
-  var basicConfig = new BasicConfig({
+  var dummyConfig = new DummyConfig({
     listener: function() {
       draw();
     }
@@ -202,7 +205,7 @@
       _refreshCanvas();
 
       var basicOption = {};
-      basicConfig.collect(basicOption);
+      dummyConfig.basic.collect(basicOption);
       basicOption.template = _createTemplate(basicOption);
       
       var git = new GitGraphWrapperExtention(basicOption);
@@ -256,23 +259,7 @@
     function _createTemplate(basicOption) {
       var template = new GitGraph.Template().get(basicOption.template);
 
-      templateConfig.collect(template);
-      
-      // if (config.colors !== '') {
-      //   var colors = config.colors.split(',');
-      //   template.colors = colors;
-      // }
-
-      // arrow
-      // if (config.arrowColor) {
-      //   template.arrow.color = config.arrowColor;
-      // }
-      // if (config.arrowSize) {
-      //   template.arrow.size = config.arrowSize;
-      // }
-      // if (config.arrowOffset) {
-      //   template.arrow.offset = config.arrowOffset;
-      // }
+      dummyConfig.template.collect(template);
 
       // branch
       if (config.branchColor) {

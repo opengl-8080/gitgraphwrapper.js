@@ -162,6 +162,10 @@
       listener: _listener,
       parentName: _idPrefix
     });
+    var _messageTemplate = new MessageTemplate({
+      listener: _listener,
+      parentName: _idPrefix
+    });
 
     this.collect = function(target) {
       if (!(_name in target)) {
@@ -171,6 +175,7 @@
         inputElement.collect(target[_name]);
       });
       _dotTemplate.collect(target[_name]);
+      _messageTemplate.collect(target[_name]);
     };
   }
 
@@ -184,6 +189,31 @@
       new TextBox({id: _idPrefix + '_size', name: 'size', listener: _listener}),
       new TextBox({id: _idPrefix + '_strokeWidth', name: 'strokeWidth', listener: _listener}),
       new TextBox({id: _idPrefix + '_strokeColor', name: 'strokeColor', listener: _listener})
+    ];
+
+    this.collect = function(target) {
+      if (!(_name in target)) {
+        target[_name] = {};
+      }
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target[_name]);
+      });
+    };
+  }
+
+  function MessageTemplate(option) {
+    var _listener = option.listener;
+    var _parentName = option.parentName;
+    var _name = 'message';
+    var _idPrefix = _parentName + '_' + _name;
+    var _inputElements = [
+      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_display', name: 'display', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_displayAuthor', name: 'displayAuthor', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_displayBranch', name: 'displayBranch', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_displayHash', name: 'displayHash', listener: _listener}),
+      new TextBox({id: _idPrefix + '_font', name: 'font', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_shouldDisplayTooltipsInCompactMode', name: 'shouldDisplayTooltipsInCompactMode', listener: _listener})
     ];
 
     this.collect = function(target) {
@@ -296,31 +326,11 @@
     }
 
     function _createTemplate(basicOption) {
-      var template = new GitGraph.Template().get(basicOption.template);
+      var tmpObject = new GitGraph.Template().get(basicOption.template);
 
-      dummyConfig.template.collect(template);
+      dummyConfig.template.collect(tmpObject);
 
-      // commit.message
-      if (config.commitMessageColor) {
-        template.commit.message.color = config.commitMessageColor;
-      }
-      if (config.commitMessageDisplay) {
-        template.commit.message.display = config.commitMessageDisplay === 'true';
-      }
-      if (config.commitMessageDisplayAuthor) {
-        template.commit.message.displayAuthor = config.commitMessageDisplayAuthor === 'true';
-      }
-      if (config.commitMessageDisplayBranch) {
-        template.commit.message.displayBranch = config.commitMessageDisplayBranch === 'true';
-      }
-      if (config.commitMessageDisplayHash) {
-        template.commit.message.displayHash = config.commitMessageDisplayHash === 'true';
-      }
-      if (config.commitMessageFont) {
-        template.commit.message.font = config.commitMessageFont;
-      }
-
-      return template;
+      return tmpObject;
     }
 
     function _refreshCanvas() {
@@ -462,28 +472,13 @@
 
   function Config() {
     var _defaults = {
-      commitMessageColor: '',
-      commitMessageDisplay: '',
-      commitMessageDisplayAuthor: '',
-      commitMessageDisplayBranch: '',
-      commitMessageDisplayHash: '',
-      commitMessageFont: '',
-      commitShouldDisplayTooltipsInCompactMode: ''
     };
 
     var _elements = {};
     var _listener = function() {};
     var _self = this;
 
-    for (var key in _defaults) {
-      _initElement(key);
-    }
-
     this.apply = function(obj) {
-      for (var key in _defaults) {
-        _setValue(key, obj[key] || _defaults[key]);
-      }
-
       for (var key in obj) {
         var branchOptionKey = new BranchOptionKey(key);
 

@@ -1,4 +1,171 @@
 (function() {
+  // refactoring
+  function InputElement(option) {
+    this.id = option.id;
+    this.name = option.name;
+    this.listener = option.listener;
+    this.element = document.getElementById(this.id);
+    this.element.addEventListener('change', this.listener);
+  }
+
+  InputElement.prototype.collect = function(target) {
+    var value = this.element.value;
+
+    if (value !== '') {
+      target[this.name] = value;
+    }
+  };
+
+  InputElement.prototype.dump = InputElement.prototype.collect;
+
+  InputElement.prototype.restore = function(source) {
+    if (this.name in source && source[this.name] !== '') {
+      this.element.value = source[this.name];
+    }
+  };
+
+  function TextBox(option) {
+    InputElement.call(this, option);
+  }
+
+  function SelectBox(option) {
+    InputElement.call(this, option);
+  }
+
+  function BooleanSelectBox(option) {
+    InputElement.call(this, option);
+  }
+
+  _inherits(InputElement, TextBox);
+  _inherits(InputElement, SelectBox);
+  _inherits(InputElement, BooleanSelectBox);
+
+  BooleanSelectBox.prototype.collect = function(target) {
+    var value = this.element.value;
+
+    if (value !== '') {
+      target[this.name] = (value === 'true');
+    }
+  };
+
+  BooleanSelectBox.prototype.dump = BooleanSelectBox.prototype.collect;
+
+  function BasicConfig(option) {
+    var _listener = option.listener;
+    var _name = 'basic';
+    var _inputElements = [
+      new SelectBox({id: _name + '_template', name: 'template', listener: _listener}),
+      new BooleanSelectBox({id: _name + '_reverseArrow', name: 'reverseArrow', listener: _listener}),
+      new SelectBox({id: _name + '_orientation', name: 'orientation', listener: _listener}),
+      new SelectBox({id: _name + '_mode', name: 'mode', listener: _listener}),
+      new TextBox({id: _name + '_author', name: 'author', listener: _listener})
+    ];
+
+    this.collect = function(target) {
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target);
+      });
+    };
+
+    this.dump = function(target) {
+      target.basic = {};
+
+      _inputElements.forEach(function(inputElement) {
+        inputElement.dump(target.basic);
+      });
+    };
+
+    this.restore = function(source) {
+      _inputElements.forEach(function(inputElement) {
+        inputElement.restore(source.basic);
+      });
+    };
+  }
+
+  function TemplateConfig(option) {
+    var _listener = option.listener;
+    var _name = 'template';
+    var _colors = new TextBox({id: _name + '_colors', name: 'colors', listener: _listener});
+    var _arrow = new ArrowTemplate({
+      parentName: _name,
+      listener: _listener
+    });
+
+    this.collect = function(target) {
+      _colors.collect(target);
+      _arrow.collect(target);
+    };
+
+    this.dump = function(target) {
+      target.template = {};
+
+      _inputElements.forEach(function(inputElement) {
+        inputElement.dump(target.template);
+      });
+    };
+
+    this.restore = function(source) {
+      _inputElements.forEach(function(inputElement) {
+        inputElement.restore(source.template);
+      });
+    };
+  }
+
+  function ArrowTemplate(option) {
+    var _parentName = option.parentName;
+    var _name = 'arrow';
+    var _listener = option.listener;
+    var _inputElements = [
+      new TextBox({id: _parentName + '_' + _name + '_color', name: 'color', listener: _listener}),
+      new TextBox({id: _parentName + '_' + _name + '_size', name: 'size', listener: _listener}),
+      new TextBox({id: _parentName + '_' + _name + '_offset', name: 'offset', listener: _listener})
+    ];
+
+    this.collect = function(target) {
+      if (!(_name in target)) {
+        return;
+      }
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target.arrow);
+      });
+    };
+
+    this.dump = function(target) {
+      target[_name] = {};
+
+      _inputElements.forEach(function(inputElement) {
+        inputElement.dump(target[_name]);
+      });
+    };
+
+    this.restore = function(source) {
+      _inputElements.forEach(function(inputElement) {
+        inputElement.restore(source[_name]);
+      });
+    };
+  }
+
+
+
+  function _inherits(SuperClass, SubClass) {
+      var f = function() {};
+      f.prototype = SuperClass.prototype;
+      SubClass.prototype = new f();
+      SubClass.prototype.constructor = SubClass;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+  var templateConfig = new TemplateConfig({
+    listener: function() {
+      draw();
+    }
+  });
+  var basicConfig = new BasicConfig({
+    listener: function() {
+      draw();
+    }
+  });
   var storage = new Storage();
   storage.load();
 
@@ -30,14 +197,11 @@
 
     this.draw = function(commands) {
       _refreshCanvas();
+
+      var basicOption = {template: _createTemplate()};
+      basicConfig.collect(basicOption);
       
-      var git = new GitGraphWrapperExtention({
-        template: _createTemplate(),
-        reverseArrow: config.reverseArrow,
-        orientation: config.orientation,
-        mode: config.mode,
-        author: config.author === '' ? null : config.author
-      });
+      var git = new GitGraphWrapperExtention(basicOption);
 
       git.defaultOptions({
         branch: _createBranchOption()
@@ -87,22 +251,24 @@
 
     function _createTemplate() {
       var template = new GitGraph.Template().get(config.template);
+
+      templateConfig.collect(template);
       
-      if (config.colors !== '') {
-        var colors = config.colors.split(',');
-        template.colors = colors;
-      }
+      // if (config.colors !== '') {
+      //   var colors = config.colors.split(',');
+      //   template.colors = colors;
+      // }
 
       // arrow
-      if (config.arrowColor) {
-        template.arrow.color = config.arrowColor;
-      }
-      if (config.arrowSize) {
-        template.arrow.size = config.arrowSize;
-      }
-      if (config.arrowOffset) {
-        template.arrow.offset = config.arrowOffset;
-      }
+      // if (config.arrowColor) {
+      //   template.arrow.color = config.arrowColor;
+      // }
+      // if (config.arrowSize) {
+      //   template.arrow.size = config.arrowSize;
+      // }
+      // if (config.arrowOffset) {
+      //   template.arrow.offset = config.arrowOffset;
+      // }
 
       // branch
       if (config.branchColor) {
@@ -323,15 +489,6 @@
 
   function Config() {
     var _defaults = {
-      template: 'metro',
-      orientation: 'vertical',
-      mode: '',
-      author: '',
-      reverseArrow: false,
-      colors: '',
-      arrowColor: '',
-      arrowSize: '',
-      arrowOffset: '',
       branchColor: '',
       branchLineWidth: '',
       branchMergeStyle: '',
@@ -538,4 +695,5 @@
       draw();
     });
   }
+
 })();

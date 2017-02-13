@@ -18,21 +18,27 @@
           <legend>Basic options</legend>
 
           <div class="config-item">
-            <label for="template">template</label>
-            <select id="template">
+            <label for="basic_template">template</label>
+            <select id="basic_template">
+              <option value=""></option>
               <option value="metro">metro</option>
               <option value="blackarrow">blackarrow</option>
             </select>
           </div>
 
           <div class="config-item">
-            <label for="reverseArrow">reverseArrow</label>
-            <input type="checkbox" id="reverseArrow" />
+            <label for="basic_reverseArrow">reverseArrow</label>
+            <select id="basic_reverseArrow">
+              <option value=""></option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
           </div>
 
           <div class="config-item">
-            <label for="orientation">orientation</label>
-            <select id="orientation">
+            <label for="basic_orientation">orientation</label>
+            <select id="basic_orientation">
+              <option value=""></option>
               <option value="vertical">vertical</option>
               <option value="vertical-reverse">vertical-reverse</option>
               <option value="horizontal">horizontal</option>
@@ -41,16 +47,16 @@
           </div>
 
           <div class="config-item">
-            <label for="mode">mode</label>
-            <select id="mode">
-              <option value="">default</option>
+            <label for="basic_mode">mode</label>
+            <select id="basic_mode">
+              <option value=""></option>
               <option value="compact">compact</option>
             </select>
           </div>
 
           <div class="config-item">
-            <label for="author">author</label>
-            <input type="text" id="author" value="" />
+            <label for="basic_author">author</label>
+            <input type="text" id="basic_author" value="" />
           </div>
         </fieldset>
 
@@ -61,8 +67,8 @@
             <legend>General</legend>
 
             <div class="config-item">
-              <label for="colors">colors</label>
-              <input type="text" id="colors" value=""
+              <label for="template_colors">colors</label>
+              <input type="text" id="template_colors" value=""
                      size="50"
                      placeholder="#6963FF, #47E8D4, #6BDB52, #E84BA5, #FFA657" />
             </div>
@@ -72,18 +78,18 @@
             <legend>Arrow</legend>
 
             <div class="config-item">
-              <label for="arrowColor">color</label>
-              <input type="text" id="arrowColor" class="midium-input" placeholder="#000" />
+              <label for="template_arrow_color">color</label>
+              <input type="text" id="template_arrow_color" class="midium-input" placeholder="#000" />
             </div>
 
             <div class="config-item">
-              <label for="arrowSize">size</label>
-              <input type="number" id="arrowSize" min="1" class="short-input" />
+              <label for="template_arrow_size">size</label>
+              <input type="number" id="template_arrow_size" min="1" class="short-input" />
             </div>
 
             <div class="config-item">
-              <label for="arrowOffset">offset</label>
-              <input type="number" id="arrowOffset" min="1" class="short-input" />
+              <label for="template_arrow_offset">offset</label>
+              <input type="number" id="template_arrow_offset" min="1" class="short-input" />
             </div>
           </fieldset>
 

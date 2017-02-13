@@ -76,20 +76,6 @@
         inputElement.collect(target);
       });
     };
-
-    this.dump = function(target) {
-      target.basic = {};
-
-      _inputElements.forEach(function(inputElement) {
-        inputElement.dump(target.basic);
-      });
-    };
-
-    this.restore = function(source) {
-      _inputElements.forEach(function(inputElement) {
-        inputElement.restore(source.basic);
-      });
-    };
   }
 
   function TemplateConfig(option) {
@@ -100,37 +86,29 @@
       parentName: _name,
       listener: _listener
     });
+    var _branch = new BranchTemplate({
+      parentName: _name,
+      listener: _listener
+    });
 
     this.collect = function(target) {
       _colors.collect(target, function(text) {
         return text.replace(/ */g, '').split(',');
       });
       _arrow.collect(target);
-    };
-
-    this.dump = function(target) {
-      target[_name] = {};
-
-      _inputElements.forEach(function(inputElement) {
-        inputElement.dump(target[_name]);
-      });
-    };
-
-    this.restore = function(source) {
-      _inputElements.forEach(function(inputElement) {
-        inputElement.restore(source[_name]);
-      });
+      _branch.collect(target);
     };
   }
 
   function ArrowTemplate(option) {
     var _parentName = option.parentName;
     var _name = 'arrow';
+    var _idPrefix = _parentName + '_' + _name;
     var _listener = option.listener;
     var _inputElements = [
-      new TextBox({id: _parentName + '_' + _name + '_color', name: 'color', listener: _listener}),
-      new TextBox({id: _parentName + '_' + _name + '_size', name: 'size', listener: _listener}),
-      new TextBox({id: _parentName + '_' + _name + '_offset', name: 'offset', listener: _listener})
+      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
+      new TextBox({id: _idPrefix + '_size', name: 'size', listener: _listener}),
+      new TextBox({id: _idPrefix + '_offset', name: 'offset', listener: _listener})
     ];
 
     this.collect = function(target) {
@@ -138,21 +116,33 @@
         return;
       }
       _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target.arrow);
+        inputElement.collect(target[_name]);
       });
     };
+  }
 
-    this.dump = function(target) {
-      target[_name] = {};
+  function BranchTemplate(option) {
+    var _listener = option.listener;
+    var _parentName = option.parentName;
+    var _name = 'branch';
+    var _idPrefix = _parentName + '_' + _name;
+    var _inputElements = [
+      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
+      new TextBox({id: _idPrefix + '_lineWidth', name: 'lineWidth', listener: _listener}),
+      new SelectBox({id: _idPrefix + '_mergeStyle', name: 'mergeStyle', listener: _listener}),
+      new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
+      new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_showLabel', name: 'showLabel', listener: _listener}),
+      new TextBox({id: _idPrefix + '_labelColor', name: 'labelColor', listener: _listener}),
+      new TextBox({id: _idPrefix + '_labelFont', name: 'labelFont', listener: _listener})
+    ];
 
+    this.collect = function(target) {
+      if (!(_name in target)) {
+        return;
+      }
       _inputElements.forEach(function(inputElement) {
-        inputElement.dump(target[_name]);
-      });
-    };
-
-    this.restore = function(source) {
-      _inputElements.forEach(function(inputElement) {
-        inputElement.restore(source[_name]);
+        inputElement.collect(target[_name]);
       });
     };
   }
@@ -260,32 +250,6 @@
       var template = new GitGraph.Template().get(basicOption.template);
 
       dummyConfig.template.collect(template);
-
-      // branch
-      if (config.branchColor) {
-        template.branch.color = config.branchColor;
-      }
-      if (config.branchLineWidth) {
-        template.branch.lineWidth = config.branchLineWidth;
-      }
-      if (config.branchMergeStyle) {
-        template.branch.mergeStyle = config.branchMergeStyle;
-      }
-      if (config.branchSpacingX) {
-        template.branch.spacingX = config.branchSpacingX;
-      }
-      if (config.branchSpacingY) {
-        template.branch.spacingY = config.branchSpacingY;
-      }
-      if (config.branchShowLabel) {
-        template.branch.showLabel = config.branchShowLabel === 'true';
-      }
-      if (config.branchLabelColor) {
-        template.branch.labelColor = config.branchLabelColor;
-      }
-      if (config.branchLabelFont) {
-        template.branch.labelFont = config.branchLabelFont;
-      }
 
       // commit
       if (config.commitSpacingX) {
@@ -480,14 +444,6 @@
 
   function Config() {
     var _defaults = {
-      branchColor: '',
-      branchLineWidth: '',
-      branchMergeStyle: '',
-      branchSpacingX: '',
-      branchSpacingY: '',
-      branchShowLabel: '',
-      branchLabelColor: '',
-      branchLabelFont: '',
       commitSpacingX: '',
       commitSpacingY: '',
       commitWidthExtension: '',

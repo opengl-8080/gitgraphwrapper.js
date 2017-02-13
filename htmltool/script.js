@@ -156,7 +156,34 @@
       new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
       new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
       new TextBox({id: _idPrefix + '_widthExtension', name: 'widthExtension', listener: _listener}),
+      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener})
+    ];
+    var _dotTemplate = new DotTemplate({
+      listener: _listener,
+      parentName: _idPrefix
+    });
+
+    this.collect = function(target) {
+      if (!(_name in target)) {
+        target[_name] = {};
+      }
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target[_name]);
+      });
+      _dotTemplate.collect(target[_name]);
+    };
+  }
+
+  function DotTemplate(option) {
+    var _listener = option.listener;
+    var _parentName = option.parentName;
+    var _name = 'dot';
+    var _idPrefix = _parentName + '_' + _name;
+    var _inputElements = [
       new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
+      new TextBox({id: _idPrefix + '_size', name: 'size', listener: _listener}),
+      new TextBox({id: _idPrefix + '_strokeWidth', name: 'strokeWidth', listener: _listener}),
+      new TextBox({id: _idPrefix + '_strokeColor', name: 'strokeColor', listener: _listener})
     ];
 
     this.collect = function(target) {
@@ -272,20 +299,6 @@
       var template = new GitGraph.Template().get(basicOption.template);
 
       dummyConfig.template.collect(template);
-
-      // commit.dot
-      if (config.commitDotColor) {
-        template.commit.dot.color = config.commitDotColor;
-      }
-      if (config.commitDotSize) {
-        template.commit.dot.size = config.commitDotSize;
-      }
-      if (config.commitDotStrokeWidth) {
-        template.commit.dot.strokeWidth = config.commitDotStrokeWidth;
-      }
-      if (config.commitDotStrokeColor) {
-        template.commit.dot.strokeColor = config.commitDotStrokeColor;
-      }
 
       // commit.message
       if (config.commitMessageColor) {
@@ -449,9 +462,6 @@
 
   function Config() {
     var _defaults = {
-      commitDotColor: '',
-      commitDotSize: '',
-      commitDotStrokeWidth: '',
       commitMessageColor: '',
       commitMessageDisplay: '',
       commitMessageDisplayAuthor: '',

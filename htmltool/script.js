@@ -12,6 +12,9 @@
     var value = this.element.value;
 
     if (value !== '') {
+      if (this.element.type === 'number') {
+        value = Number(value);
+      }
       target[this.name] = value;
     }
   };
@@ -198,8 +201,9 @@
     this.draw = function(commands) {
       _refreshCanvas();
 
-      var basicOption = {template: _createTemplate()};
+      var basicOption = {};
       basicConfig.collect(basicOption);
+      basicOption.template = _createTemplate(basicOption);
       
       var git = new GitGraphWrapperExtention(basicOption);
 
@@ -249,8 +253,8 @@
       return branchDefaultOptions;
     }
 
-    function _createTemplate() {
-      var template = new GitGraph.Template().get(config.template);
+    function _createTemplate(basicOption) {
+      var template = new GitGraph.Template().get(basicOption.template);
 
       templateConfig.collect(template);
       

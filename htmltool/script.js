@@ -62,8 +62,19 @@
 
   function DummyConfig(option) {
     var _listener = option.listener;
-    this.basic = new BasicConfig({listener: _listener});
-    this.template = new TemplateConfig({listener: _listener});
+    var _basic = new BasicConfig({listener: _listener});
+    var _template = new TemplateConfig({listener: _listener});
+    
+    this.collectOpiton = function() {
+      var basicConfig = {};
+      _basic.collect(basicConfig);
+      
+      var option = basicConfig.basic;
+      option.template = new GitGraph.Template().get(basicConfig.basic.template);
+      _template.collect(option);
+
+      return option;
+    };
   }
 
   function BasicConfig(option) {
@@ -282,12 +293,7 @@
     this.draw = function(commands) {
       _refreshCanvas();
 
-      var basicOpiton = {};
-      dummyConfig.basic.collect(basicOpiton);
-      var option = basicOpiton.basic;
-      option.template = new GitGraph.Template().get(basicOpiton.basic.template);
-      dummyConfig.template.collect(option);
-      
+      var option = dummyConfig.collectOpiton();
       var git = new GitGraphWrapperExtention(option);
 
       git.defaultOptions({

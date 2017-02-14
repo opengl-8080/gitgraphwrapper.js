@@ -78,13 +78,13 @@
     };
   }
 
-  _inherits(AbstractConfig, MessageTemplate);
-  _inherits(AbstractConfig, DotTemplate);
-  _inherits(AbstractConfig, CommitTemplate);
-  _inherits(AbstractConfig, BranchTemplate);
-  _inherits(AbstractConfig, ArrowTemplate);
-  _inherits(AbstractConfig, TemplateConfig);
   _inherits(AbstractConfig, BasicConfig);
+  _inherits(AbstractConfig, TemplateConfig);
+  _inherits(AbstractConfig, TemplateArrowConfig);
+  _inherits(AbstractConfig, TemplateBranchConfig);
+  _inherits(AbstractConfig, TemplateCommitConfig);
+  _inherits(AbstractConfig, TemplateDotConfig);
+  _inherits(AbstractConfig, TemplateMessageConfig);
 
   function AbstractConfig(option) {
     var _name = option.name;
@@ -126,15 +126,15 @@
       name: _name,
       inputElements: [
         new TemplateColorsConfig({parentName: _idPrefix, name: 'colors', listener: _listener}),
-        new ArrowTemplate({
+        new TemplateArrowConfig({
           parentName: _idPrefix,
           listener: _listener
         }),
-        new BranchTemplate({
+        new TemplateBranchConfig({
           parentName: _idPrefix,
           listener: _listener
         }),
-        new CommitTemplate({
+        new TemplateCommitConfig({
           parentName: _idPrefix,
           listener: _listener
         })
@@ -142,7 +142,7 @@
     });
   }
 
-  function ArrowTemplate(option) {
+  function TemplateArrowConfig(option) {
     var _name = 'arrow';
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
@@ -157,7 +157,7 @@
     });
   }
 
-  function BranchTemplate(option) {
+  function TemplateBranchConfig(option) {
     var _name = 'branch';
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
@@ -177,7 +177,7 @@
     });
   }
 
-  function CommitTemplate(option) {
+  function TemplateCommitConfig(option) {
     var _name = 'commit';
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
@@ -189,11 +189,11 @@
         new TextBox({parentName: _idPrefix, name: 'spacingY', listener: _listener}),
         new TextBox({parentName: _idPrefix, name: 'widthExtension', listener: _listener}),
         new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
-        new DotTemplate({
+        new TemplateDotConfig({
           listener: _listener,
           parentName: _idPrefix
         }),
-        new MessageTemplate({
+        new TemplateMessageConfig({
           listener: _listener,
           parentName: _idPrefix
         })
@@ -201,7 +201,7 @@
     });
   }
 
-  function DotTemplate(option) {
+  function TemplateDotConfig(option) {
     var _name = 'dot';
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
@@ -217,7 +217,7 @@
     });
   }
 
-  function MessageTemplate(option) {
+  function TemplateMessageConfig(option) {
     var _name = 'message';
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;

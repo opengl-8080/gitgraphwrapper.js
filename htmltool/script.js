@@ -156,16 +156,16 @@
       new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
       new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
       new TextBox({id: _idPrefix + '_widthExtension', name: 'widthExtension', listener: _listener}),
-      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener})
+      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
+      new DotTemplate({
+        listener: _listener,
+        parentName: _idPrefix
+      }),
+      new MessageTemplate({
+        listener: _listener,
+        parentName: _idPrefix
+      })
     ];
-    var _dotTemplate = new DotTemplate({
-      listener: _listener,
-      parentName: _idPrefix
-    });
-    var _messageTemplate = new MessageTemplate({
-      listener: _listener,
-      parentName: _idPrefix
-    });
 
     this.collect = function(target) {
       if (!(_name in target)) {
@@ -174,8 +174,6 @@
       _inputElements.forEach(function(inputElement) {
         inputElement.collect(target[_name]);
       });
-      _dotTemplate.collect(target[_name]);
-      _messageTemplate.collect(target[_name]);
     };
   }
 

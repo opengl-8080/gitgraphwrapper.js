@@ -1,8 +1,8 @@
 (function() {
   // refactoring
   function InputElement(option) {
-    this.id = option.id;
     this.name = option.name;
+    this.id = option.parentName + '_' + this.name;
     this.listener = option.listener;
     this.element = document.getElementById(this.id);
     this.element.addEventListener('change', this.listener);
@@ -78,169 +78,154 @@
     };
   }
 
-  function BasicConfig(option) {
-    var _parentName = option.parentName;
-    var _name = 'basic';
-    var _idPrefix = _parentName + '_' + _name;
-    var _listener = option.listener;
-    var _inputElements = [
-      new SelectBox({id: _idPrefix + '_template', name: 'template', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_reverseArrow', name: 'reverseArrow', listener: _listener}),
-      new SelectBox({id: _idPrefix + '_orientation', name: 'orientation', listener: _listener}),
-      new SelectBox({id: _idPrefix + '_mode', name: 'mode', listener: _listener}),
-      new TextBox({id: _idPrefix + '_author', name: 'author', listener: _listener})
-    ];
+  _inherits(BasicConfig, MessageTemplate);
+  _inherits(BasicConfig, DotTemplate);
+  _inherits(BasicConfig, CommitTemplate);
+  _inherits(BasicConfig, BranchTemplate);
+  _inherits(BasicConfig, ArrowTemplate);
+  _inherits(BasicConfig, TemplateConfig);
+  _inherits(BasicConfig, BasicConfig);
 
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
+  function BasicConfig(option) {
+    var _name = 'basic';
+    var _idPrefix = option.parentName + '_' + _name;
+    var _listener = option.listener;
+
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new SelectBox({parentName: _idPrefix, name: 'template', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'reverseArrow', listener: _listener}),
+        new SelectBox({parentName: _idPrefix, name: 'orientation', listener: _listener}),
+        new SelectBox({parentName: _idPrefix, name: 'mode', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'author', listener: _listener})
+      ]
+    });
   }
 
   function TemplateConfig(option) {
-    var _parentName = option.parentName;
     var _name = 'template';
-    var _idPrefix = _parentName + '_' + _name;
+    var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
-    var _childOption = {
-      parentName: _idPrefix,
-      listener: _listener
-    };
-    var _inputElements = [
-      new TemplateColorsConfig({id: _idPrefix + '_colors', name: 'colors', listener: _listener}),
-      new ArrowTemplate(_childOption),
-      new BranchTemplate(_childOption),
-      new CommitTemplate(_childOption)
-    ];
 
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new TemplateColorsConfig({parentName: _idPrefix, name: 'colors', listener: _listener}),
+        new ArrowTemplate({
+          parentName: _idPrefix,
+          listener: _listener
+        }),
+        new BranchTemplate({
+          parentName: _idPrefix,
+          listener: _listener
+        }),
+        new CommitTemplate({
+          parentName: _idPrefix,
+          listener: _listener
+        })
+      ]
+    });
   }
 
   function ArrowTemplate(option) {
-    var _parentName = option.parentName;
     var _name = 'arrow';
-    var _idPrefix = _parentName + '_' + _name;
+    var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
-    var _inputElements = [
-      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
-      new TextBox({id: _idPrefix + '_size', name: 'size', listener: _listener}),
-      new TextBox({id: _idPrefix + '_offset', name: 'offset', listener: _listener})
-    ];
 
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'size', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'offset', listener: _listener})
+      ]
+    });
   }
 
   function BranchTemplate(option) {
-    var _parentName = option.parentName;
     var _name = 'branch';
-    var _idPrefix = _parentName + '_' + _name;
+    var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
-    var _inputElements = [
-      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
-      new TextBox({id: _idPrefix + '_lineWidth', name: 'lineWidth', listener: _listener}),
-      new SelectBox({id: _idPrefix + '_mergeStyle', name: 'mergeStyle', listener: _listener}),
-      new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
-      new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_showLabel', name: 'showLabel', listener: _listener}),
-      new TextBox({id: _idPrefix + '_labelColor', name: 'labelColor', listener: _listener}),
-      new TextBox({id: _idPrefix + '_labelFont', name: 'labelFont', listener: _listener})
-    ];
 
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'lineWidth', listener: _listener}),
+        new SelectBox({parentName: _idPrefix, name: 'mergeStyle', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'spacingX', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'spacingY', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'showLabel', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'labelColor', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'labelFont', listener: _listener})
+      ]
+    });
   }
 
   function CommitTemplate(option) {
-    var _parentName = option.parentName;
     var _name = 'commit';
-    var _idPrefix = _parentName + '_' + _name;
+    var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
-    var _inputElements = [
-      new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
-      new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
-      new TextBox({id: _idPrefix + '_widthExtension', name: 'widthExtension', listener: _listener}),
-      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
-      new DotTemplate({
-        listener: _listener,
-        parentName: _idPrefix
-      }),
-      new MessageTemplate({
-        listener: _listener,
-        parentName: _idPrefix
-      })
-    ];
 
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new TextBox({parentName: _idPrefix, name: 'spacingX', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'spacingY', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'widthExtension', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
+        new DotTemplate({
+          listener: _listener,
+          parentName: _idPrefix
+        }),
+        new MessageTemplate({
+          listener: _listener,
+          parentName: _idPrefix
+        })
+      ]
+    });
   }
 
   function DotTemplate(option) {
-    var _parentName = option.parentName;
     var _name = 'dot';
-    var _idPrefix = _parentName + '_' + _name;
+    var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
-    var _inputElements = [
-      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
-      new TextBox({id: _idPrefix + '_size', name: 'size', listener: _listener}),
-      new TextBox({id: _idPrefix + '_strokeWidth', name: 'strokeWidth', listener: _listener}),
-      new TextBox({id: _idPrefix + '_strokeColor', name: 'strokeColor', listener: _listener})
-    ];
 
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'size', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'strokeWidth', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'strokeColor', listener: _listener})
+      ]
+    });
   }
 
   function MessageTemplate(option) {
-    var _parentName = option.parentName;
     var _name = 'message';
-    var _idPrefix = _parentName + '_' + _name;
+    var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
-    var _inputElements = [
-      new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_display', name: 'display', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_displayAuthor', name: 'displayAuthor', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_displayBranch', name: 'displayBranch', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_displayHash', name: 'displayHash', listener: _listener}),
-      new TextBox({id: _idPrefix + '_font', name: 'font', listener: _listener}),
-      new BooleanSelectBox({id: _idPrefix + '_shouldDisplayTooltipsInCompactMode', name: 'shouldDisplayTooltipsInCompactMode', listener: _listener})
-    ];
 
+    BaseConfig.call(this, {
+      name: _name,
+      inputElements: [
+        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'display', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'displayAuthor', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'displayBranch', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'displayHash', listener: _listener}),
+        new TextBox({parentName: _idPrefix, name: 'font', listener: _listener}),
+        new BooleanSelectBox({parentName: _idPrefix, name: 'shouldDisplayTooltipsInCompactMode', listener: _listener})
+      ]
+    });
+  }
+
+  function BaseConfig(option) {
+    var _name = option.name;
+    var _inputElements = option.inputElements;
+    
     this.collect = function(target) {
       if (!(_name in target)) {
         target[_name] = {};

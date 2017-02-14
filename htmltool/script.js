@@ -120,10 +120,14 @@
     }
   };
 
+  /**
+   * create child builder object.
+   * child is InputElement or Config class.
+   */
   function child(constructorFunction, name) {
     return {
       newInstance: function(option) {
-        option.name = name;
+        option.name = name; // only child is InputElement instance.
         return new constructorFunction(option);
       }
     };

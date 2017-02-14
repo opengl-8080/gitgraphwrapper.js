@@ -87,155 +87,140 @@
   _inherits(AbstractConfig, TemplateMessageConfig);
 
   function AbstractConfig(option) {
-    var _name = option.name;
-    var _inputElements = option.inputElements;
-    
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
+    this.parentName = option.parentName;
+    this.listener = option.listener;
+    this.inputElements = [];
+  }
+
+  AbstractConfig.prototype.collect = function(target) {
+    var _self = this;
+
+    if (!(_self.name in target)) {
+      target[_self.name] = {};
+    }
+
+    _self.inputElements.forEach(function(inputElement) {
+      inputElement.collect(target[_self.name]);
+    });
+  };
+
+  AbstractConfig.prototype.initName = function(name) {
+    this.name = name;
+    this.idPrefix = this.parentName + '_' + this.name;
+  };
+
+  AbstractConfig.prototype.initInputElements = function(children) {
+    for (var i=0; i<children.length; i++) {
+      var child = children[i].newInstance({
+        parentName: this.idPrefix,
+        listener: this.listener
       });
+
+      this.inputElements.push(child);
+    }
+  };
+
+  function child(constructorFunction, name) {
+    return {
+      newInstance: function(option) {
+        option.name = name;
+        return new constructorFunction(option);
+      }
     };
   }
 
   function BasicConfig(option) {
-    var _name = 'basic';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
+    AbstractConfig.call(this, option);
 
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new SelectBox({parentName: _idPrefix, name: 'template', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'reverseArrow', listener: _listener}),
-        new SelectBox({parentName: _idPrefix, name: 'orientation', listener: _listener}),
-        new SelectBox({parentName: _idPrefix, name: 'mode', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'author', listener: _listener})
-      ]
-    });
+    this.initName('basic');
+    this.initInputElements([
+      child(SelectBox, 'template'),
+      child(BooleanSelectBox, 'reverseArrow'),
+      child(SelectBox, 'orientation'),
+      child(SelectBox, 'mode'),
+      child(TextBox, 'author')
+    ]);
   }
 
   function TemplateConfig(option) {
-    var _name = 'template';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
+    AbstractConfig.call(this, option);
 
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new TemplateColorsConfig({parentName: _idPrefix, name: 'colors', listener: _listener}),
-        new TemplateArrowConfig({
-          parentName: _idPrefix,
-          listener: _listener
-        }),
-        new TemplateBranchConfig({
-          parentName: _idPrefix,
-          listener: _listener
-        }),
-        new TemplateCommitConfig({
-          parentName: _idPrefix,
-          listener: _listener
-        })
-      ]
-    });
+    this.initName('template');
+    this.initInputElements([
+      child(TemplateColorsConfig, 'colors'),
+      child(TemplateArrowConfig),
+      child(TemplateBranchConfig),
+      child(TemplateCommitConfig)
+    ]);
   }
 
   function TemplateArrowConfig(option) {
-    var _name = 'arrow';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
-
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'size', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'offset', listener: _listener})
-      ]
-    });
+    AbstractConfig.call(this, option);
+    
+    this.initName('arrow');
+    this.initInputElements([
+      child(TextBox, 'color'),
+      child(TextBox, 'size'),
+      child(TextBox, 'offset')
+    ]);
   }
 
   function TemplateBranchConfig(option) {
-    var _name = 'branch';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
+    AbstractConfig.call(this, option);
 
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'lineWidth', listener: _listener}),
-        new SelectBox({parentName: _idPrefix, name: 'mergeStyle', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'spacingX', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'spacingY', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'showLabel', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'labelColor', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'labelFont', listener: _listener})
-      ]
-    });
+    this.initName('branch');
+    this.initInputElements([
+      child(TextBox, 'color'),
+      child(TextBox, 'lineWidth'),
+      child(SelectBox, 'mergeStyle'),
+      child(TextBox, 'spacingX'),
+      child(TextBox, 'spacingY'),
+      child(BooleanSelectBox, 'showLabel'),
+      child(TextBox, 'labelColor'),
+      child(TextBox, 'labelFont')
+    ]);
   }
 
   function TemplateCommitConfig(option) {
-    var _name = 'commit';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
+    AbstractConfig.call(this, option);
 
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new TextBox({parentName: _idPrefix, name: 'spacingX', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'spacingY', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'widthExtension', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
-        new TemplateDotConfig({
-          listener: _listener,
-          parentName: _idPrefix
-        }),
-        new TemplateMessageConfig({
-          listener: _listener,
-          parentName: _idPrefix
-        })
-      ]
-    });
+    this.initName('commit');
+    this.initInputElements([
+      child(TextBox, 'spacingX'),
+      child(TextBox, 'spacingY'),
+      child(TextBox, 'widthExtension'),
+      child(TextBox, 'color'),
+      child(TemplateDotConfig),
+      child(TemplateMessageConfig)
+    ]);
   }
 
   function TemplateDotConfig(option) {
-    var _name = 'dot';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
+    AbstractConfig.call(this, option);
 
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'size', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'strokeWidth', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'strokeColor', listener: _listener})
-      ]
-    });
+    this.initName('dot');
+    this.initInputElements([
+      child(TextBox, 'color'),
+      child(TextBox, 'size'),
+      child(TextBox, 'strokeWidth'),
+      child(TextBox, 'strokeColor')
+    ]);
   }
 
   function TemplateMessageConfig(option) {
-    var _name = 'message';
-    var _idPrefix = option.parentName + '_' + _name;
-    var _listener = option.listener;
+    AbstractConfig.call(this, option);
 
-    AbstractConfig.call(this, {
-      name: _name,
-      inputElements: [
-        new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'display', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'displayAuthor', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'displayBranch', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'displayHash', listener: _listener}),
-        new TextBox({parentName: _idPrefix, name: 'font', listener: _listener}),
-        new BooleanSelectBox({parentName: _idPrefix, name: 'shouldDisplayTooltipsInCompactMode', listener: _listener})
-      ]
-    });
+    this.initName('message');
+    this.initInputElements([
+      child(TextBox, 'color'),
+      child(BooleanSelectBox, 'display'),
+      child(BooleanSelectBox, 'displayAuthor'),
+      child(BooleanSelectBox, 'displayBranch'),
+      child(BooleanSelectBox, 'displayHash'),
+      child(TextBox, 'font'),
+      child(BooleanSelectBox, 'shouldDisplayTooltipsInCompactMode')
+    ]);
   }
-
 
   function _inherits(SuperClass, SubClass) {
       var f = function() {};

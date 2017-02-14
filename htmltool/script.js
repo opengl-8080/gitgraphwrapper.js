@@ -89,7 +89,7 @@
   function AbstractConfig(option) {
     this.parentName = option.parentName;
     this.listener = option.listener;
-    this.inputElements = [];
+    this.children = [];
   }
 
   AbstractConfig.prototype.collect = function(target) {
@@ -99,8 +99,8 @@
       target[_self.name] = {};
     }
 
-    _self.inputElements.forEach(function(inputElement) {
-      inputElement.collect(target[_self.name]);
+    _self.children.forEach(function(child) {
+      child.collect(target[_self.name]);
     });
   };
 
@@ -109,14 +109,14 @@
     this.idPrefix = this.parentName + '_' + this.name;
   };
 
-  AbstractConfig.prototype.initInputElements = function(children) {
+  AbstractConfig.prototype.initChildren = function(children) {
     for (var i=0; i<children.length; i++) {
       var child = children[i].newInstance({
         parentName: this.idPrefix,
         listener: this.listener
       });
 
-      this.inputElements.push(child);
+      this.children.push(child);
     }
   };
 
@@ -133,7 +133,7 @@
     AbstractConfig.call(this, option);
 
     this.initName('basic');
-    this.initInputElements([
+    this.initChildren([
       child(SelectBox, 'template'),
       child(BooleanSelectBox, 'reverseArrow'),
       child(SelectBox, 'orientation'),
@@ -146,7 +146,7 @@
     AbstractConfig.call(this, option);
 
     this.initName('template');
-    this.initInputElements([
+    this.initChildren([
       child(TemplateColorsConfig, 'colors'),
       child(TemplateArrowConfig),
       child(TemplateBranchConfig),
@@ -158,7 +158,7 @@
     AbstractConfig.call(this, option);
     
     this.initName('arrow');
-    this.initInputElements([
+    this.initChildren([
       child(TextBox, 'color'),
       child(TextBox, 'size'),
       child(TextBox, 'offset')
@@ -169,7 +169,7 @@
     AbstractConfig.call(this, option);
 
     this.initName('branch');
-    this.initInputElements([
+    this.initChildren([
       child(TextBox, 'color'),
       child(TextBox, 'lineWidth'),
       child(SelectBox, 'mergeStyle'),
@@ -185,7 +185,7 @@
     AbstractConfig.call(this, option);
 
     this.initName('commit');
-    this.initInputElements([
+    this.initChildren([
       child(TextBox, 'spacingX'),
       child(TextBox, 'spacingY'),
       child(TextBox, 'widthExtension'),
@@ -199,7 +199,7 @@
     AbstractConfig.call(this, option);
 
     this.initName('dot');
-    this.initInputElements([
+    this.initChildren([
       child(TextBox, 'color'),
       child(TextBox, 'size'),
       child(TextBox, 'strokeWidth'),
@@ -211,7 +211,7 @@
     AbstractConfig.call(this, option);
 
     this.initName('message');
-    this.initInputElements([
+    this.initChildren([
       child(TextBox, 'color'),
       child(BooleanSelectBox, 'display'),
       child(BooleanSelectBox, 'displayAuthor'),

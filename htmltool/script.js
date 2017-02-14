@@ -62,8 +62,9 @@
 
   function DummyConfig(option) {
     var _listener = option.listener;
-    var _basic = new BasicConfig({listener: _listener});
-    var _template = new TemplateConfig({listener: _listener});
+    var _name = 'config';
+    var _basic = new BasicConfig({parentName: _name, listener: _listener});
+    var _template = new TemplateConfig({parentName: _name, listener: _listener});
     
     this.collectOpiton = function() {
       var basicConfig = {};
@@ -78,14 +79,16 @@
   }
 
   function BasicConfig(option) {
-    var _listener = option.listener;
+    var _parentName = option.parentName;
     var _name = 'basic';
+    var _idPrefix = _parentName + '_' + _name;
+    var _listener = option.listener;
     var _inputElements = [
-      new SelectBox({id: _name + '_template', name: 'template', listener: _listener}),
-      new BooleanSelectBox({id: _name + '_reverseArrow', name: 'reverseArrow', listener: _listener}),
-      new SelectBox({id: _name + '_orientation', name: 'orientation', listener: _listener}),
-      new SelectBox({id: _name + '_mode', name: 'mode', listener: _listener}),
-      new TextBox({id: _name + '_author', name: 'author', listener: _listener})
+      new SelectBox({id: _idPrefix + '_template', name: 'template', listener: _listener}),
+      new BooleanSelectBox({id: _idPrefix + '_reverseArrow', name: 'reverseArrow', listener: _listener}),
+      new SelectBox({id: _idPrefix + '_orientation', name: 'orientation', listener: _listener}),
+      new SelectBox({id: _idPrefix + '_mode', name: 'mode', listener: _listener}),
+      new TextBox({id: _idPrefix + '_author', name: 'author', listener: _listener})
     ];
 
     this.collect = function(target) {
@@ -99,14 +102,16 @@
   }
 
   function TemplateConfig(option) {
-    var _listener = option.listener;
+    var _parentName = option.parentName;
     var _name = 'template';
+    var _idPrefix = _parentName + '_' + _name;
+    var _listener = option.listener;
     var _childOption = {
-      parentName: _name,
+      parentName: _idPrefix,
       listener: _listener
     };
     var _inputElements = [
-      new TemplateColorsConfig({id: _name + '_colors', name: 'colors', listener: _listener}),
+      new TemplateColorsConfig({id: _idPrefix + '_colors', name: 'colors', listener: _listener}),
       new ArrowTemplate(_childOption),
       new BranchTemplate(_childOption),
       new CommitTemplate(_childOption)
@@ -144,10 +149,10 @@
   }
 
   function BranchTemplate(option) {
-    var _listener = option.listener;
     var _parentName = option.parentName;
     var _name = 'branch';
     var _idPrefix = _parentName + '_' + _name;
+    var _listener = option.listener;
     var _inputElements = [
       new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
       new TextBox({id: _idPrefix + '_lineWidth', name: 'lineWidth', listener: _listener}),
@@ -170,10 +175,10 @@
   }
 
   function CommitTemplate(option) {
-    var _listener = option.listener;
     var _parentName = option.parentName;
     var _name = 'commit';
     var _idPrefix = _parentName + '_' + _name;
+    var _listener = option.listener;
     var _inputElements = [
       new TextBox({id: _idPrefix + '_spacingX', name: 'spacingX', listener: _listener}),
       new TextBox({id: _idPrefix + '_spacingY', name: 'spacingY', listener: _listener}),
@@ -200,10 +205,10 @@
   }
 
   function DotTemplate(option) {
-    var _listener = option.listener;
     var _parentName = option.parentName;
     var _name = 'dot';
     var _idPrefix = _parentName + '_' + _name;
+    var _listener = option.listener;
     var _inputElements = [
       new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
       new TextBox({id: _idPrefix + '_size', name: 'size', listener: _listener}),
@@ -222,10 +227,10 @@
   }
 
   function MessageTemplate(option) {
-    var _listener = option.listener;
     var _parentName = option.parentName;
     var _name = 'message';
     var _idPrefix = _parentName + '_' + _name;
+    var _listener = option.listener;
     var _inputElements = [
       new TextBox({id: _idPrefix + '_color', name: 'color', listener: _listener}),
       new BooleanSelectBox({id: _idPrefix + '_display', name: 'display', listener: _listener}),

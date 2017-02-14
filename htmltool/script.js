@@ -8,16 +8,19 @@
     this.element.addEventListener('change', this.listener);
   }
 
-  InputElement.prototype.collect = function(target, mapper) {
+  InputElement.prototype.collect = function(target) {
     var value = this.element.value;
 
     if (value !== '') {
       if (this.element.type === 'number') {
         value = Number(value);
       }
-      mapper = (typeof mapper === 'function') ? mapper : function(a) {return a;};
-      target[this.name] = mapper(value);
+      target[this.name] = this.mapValue(value);
     }
+  };
+
+  InputElement.prototype.mapValue = function(value) {
+    return value;
   };
 
   InputElement.prototype.dump = InputElement.prototype.collect;
@@ -40,19 +43,22 @@
     InputElement.call(this, option);
   }
 
+  function TemplateColorsConfig(option) {
+    InputElement.call(this, option);
+  }
+
   _inherits(InputElement, TextBox);
   _inherits(InputElement, SelectBox);
   _inherits(InputElement, BooleanSelectBox);
+  _inherits(InputElement, TemplateColorsConfig);
 
-  BooleanSelectBox.prototype.collect = function(target) {
-    var value = this.element.value;
-
-    if (value !== '') {
-      target[this.name] = (value === 'true');
-    }
+  BooleanSelectBox.prototype.mapValue = function(value) {
+    return value === 'true';
   };
 
-  BooleanSelectBox.prototype.dump = BooleanSelectBox.prototype.collect;
+  TemplateColorsConfig.prototype.mapValue = function(value) {
+    return value.replace(/ */g, '').split(',');
+  };
 
   function DummyConfig(option) {
     var _listener = option.listener;
@@ -81,7 +87,7 @@
   function TemplateConfig(option) {
     var _listener = option.listener;
     var _name = 'template';
-    var _colors = new TextBox({id: _name + '_colors', name: 'colors', listener: _listener});
+    var _colors = new TemplateColorsConfig({id: _name + '_colors', name: 'colors', listener: _listener});
     var _childOption = {
       parentName: _name,
       listener: _listener
@@ -91,9 +97,7 @@
     var _commit = new CommitTemplate(_childOption);
 
     this.collect = function(target) {
-      _colors.collect(target, function(text) {
-        return text.replace(/ */g, '').split(',');
-      });
+      _colors.collect(target);
       _arrow.collect(target);
       _branch.collect(target);
       _commit.collect(target);

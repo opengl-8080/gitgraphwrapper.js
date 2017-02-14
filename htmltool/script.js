@@ -78,20 +78,34 @@
     };
   }
 
-  _inherits(BasicConfig, MessageTemplate);
-  _inherits(BasicConfig, DotTemplate);
-  _inherits(BasicConfig, CommitTemplate);
-  _inherits(BasicConfig, BranchTemplate);
-  _inherits(BasicConfig, ArrowTemplate);
-  _inherits(BasicConfig, TemplateConfig);
-  _inherits(BasicConfig, BasicConfig);
+  _inherits(AbstractConfig, MessageTemplate);
+  _inherits(AbstractConfig, DotTemplate);
+  _inherits(AbstractConfig, CommitTemplate);
+  _inherits(AbstractConfig, BranchTemplate);
+  _inherits(AbstractConfig, ArrowTemplate);
+  _inherits(AbstractConfig, TemplateConfig);
+  _inherits(AbstractConfig, BasicConfig);
+
+  function AbstractConfig(option) {
+    var _name = option.name;
+    var _inputElements = option.inputElements;
+    
+    this.collect = function(target) {
+      if (!(_name in target)) {
+        target[_name] = {};
+      }
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target[_name]);
+      });
+    };
+  }
 
   function BasicConfig(option) {
     var _name = 'basic';
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new SelectBox({parentName: _idPrefix, name: 'template', listener: _listener}),
@@ -108,7 +122,7 @@
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new TemplateColorsConfig({parentName: _idPrefix, name: 'colors', listener: _listener}),
@@ -133,7 +147,7 @@
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
@@ -148,7 +162,7 @@
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
@@ -168,7 +182,7 @@
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new TextBox({parentName: _idPrefix, name: 'spacingX', listener: _listener}),
@@ -192,7 +206,7 @@
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
@@ -208,7 +222,7 @@
     var _idPrefix = option.parentName + '_' + _name;
     var _listener = option.listener;
 
-    BaseConfig.call(this, {
+    AbstractConfig.call(this, {
       name: _name,
       inputElements: [
         new TextBox({parentName: _idPrefix, name: 'color', listener: _listener}),
@@ -221,21 +235,6 @@
       ]
     });
   }
-
-  function BaseConfig(option) {
-    var _name = option.name;
-    var _inputElements = option.inputElements;
-    
-    this.collect = function(target) {
-      if (!(_name in target)) {
-        target[_name] = {};
-      }
-      _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target[_name]);
-      });
-    };
-  }
-
 
 
   function _inherits(SuperClass, SubClass) {

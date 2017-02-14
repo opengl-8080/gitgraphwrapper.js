@@ -87,20 +87,24 @@
   function TemplateConfig(option) {
     var _listener = option.listener;
     var _name = 'template';
-    var _colors = new TemplateColorsConfig({id: _name + '_colors', name: 'colors', listener: _listener});
     var _childOption = {
       parentName: _name,
       listener: _listener
     };
-    var _arrow = new ArrowTemplate(_childOption);
-    var _branch = new BranchTemplate(_childOption);
-    var _commit = new CommitTemplate(_childOption);
+    var _inputElements = [
+      new TemplateColorsConfig({id: _name + '_colors', name: 'colors', listener: _listener}),
+      new ArrowTemplate(_childOption),
+      new BranchTemplate(_childOption),
+      new CommitTemplate(_childOption)
+    ];
 
     this.collect = function(target) {
-      _colors.collect(target);
-      _arrow.collect(target);
-      _branch.collect(target);
-      _commit.collect(target);
+      if (!(_name in target)) {
+        target[_name] = {};
+      }
+      _inputElements.forEach(function(inputElement) {
+        inputElement.collect(target[_name]);
+      });
     };
   }
 
@@ -275,11 +279,12 @@
     this.draw = function(commands) {
       _refreshCanvas();
 
-      var basicOption = {};
-      dummyConfig.basic.collect(basicOption);
-      basicOption.template = _createTemplate(basicOption);
+      var option = {};
+      dummyConfig.basic.collect(option);
+      option.template = new GitGraph.Template().get(option.template);
+      dummyConfig.template.collect(option);
       
-      var git = new GitGraphWrapperExtention(basicOption);
+      var git = new GitGraphWrapperExtention(option);
 
       git.defaultOptions({
         branch: _createBranchOption()
@@ -325,14 +330,6 @@
       }
 
       return branchDefaultOptions;
-    }
-
-    function _createTemplate(basicOption) {
-      var tmpObject = new GitGraph.Template().get(basicOption.template);
-
-      dummyConfig.template.collect(tmpObject);
-
-      return tmpObject;
     }
 
     function _refreshCanvas() {

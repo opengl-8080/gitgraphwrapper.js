@@ -78,8 +78,11 @@
     ];
 
     this.collect = function(target) {
+      if (!(_name in target)) {
+        target[_name] = {};
+      }
       _inputElements.forEach(function(inputElement) {
-        inputElement.collect(target);
+        inputElement.collect(target[_name]);
       });
     };
   }
@@ -279,9 +282,10 @@
     this.draw = function(commands) {
       _refreshCanvas();
 
-      var option = {};
-      dummyConfig.basic.collect(option);
-      option.template = new GitGraph.Template().get(option.template);
+      var basicOpiton = {};
+      dummyConfig.basic.collect(basicOpiton);
+      var option = basicOpiton.basic;
+      option.template = new GitGraph.Template().get(basicOpiton.basic.template);
       dummyConfig.template.collect(option);
       
       var git = new GitGraphWrapperExtention(option);

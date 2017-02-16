@@ -43,56 +43,56 @@
     InputElement.call(this, option);
   }
 
-  function TemplateColorsConfig(option) {
+  function TemplateColorsOption(option) {
     InputElement.call(this, option);
   }
 
   _inherits(InputElement, TextBox);
   _inherits(InputElement, SelectBox);
   _inherits(InputElement, BooleanSelectBox);
-  _inherits(InputElement, TemplateColorsConfig);
+  _inherits(InputElement, TemplateColorsOption);
 
   BooleanSelectBox.prototype.mapValue = function(value) {
     return value === 'true';
   };
 
-  TemplateColorsConfig.prototype.mapValue = function(value) {
+  TemplateColorsOption.prototype.mapValue = function(value) {
     return value.replace(/ */g, '').split(',');
   };
 
-  function DummyConfig(option) {
+  function DummyOption(option) {
     var _listener = option.listener;
-    var _name = 'config';
-    var _basic = new BasicConfig({parentName: _name, listener: _listener});
-    var _template = new TemplateConfig({parentName: _name, listener: _listener});
+    var _name = 'option';
+    var _basic = new BasicOption({parentName: _name, listener: _listener});
+    var _template = new TemplateOption({parentName: _name, listener: _listener});
     
     this.collectOpiton = function() {
-      var basicConfig = {};
-      _basic.collect(basicConfig);
+      var basicOption = {};
+      _basic.collect(basicOption);
       
-      var option = basicConfig.basic;
-      option.template = new GitGraph.Template().get(basicConfig.basic.template);
+      var option = basicOption.basic;
+      option.template = new GitGraph.Template().get(basicOption.basic.template);
       _template.collect(option);
 
       return option;
     };
   }
 
-  _inherits(AbstractConfig, BasicConfig);
-  _inherits(AbstractConfig, TemplateConfig);
-  _inherits(AbstractConfig, TemplateArrowConfig);
-  _inherits(AbstractConfig, TemplateBranchConfig);
-  _inherits(AbstractConfig, TemplateCommitConfig);
-  _inherits(AbstractConfig, TemplateDotConfig);
-  _inherits(AbstractConfig, TemplateMessageConfig);
+  _inherits(AbstractOption, BasicOption);
+  _inherits(AbstractOption, TemplateOption);
+  _inherits(AbstractOption, TemplateArrowOption);
+  _inherits(AbstractOption, TemplateBranchOption);
+  _inherits(AbstractOption, TemplateCommitOption);
+  _inherits(AbstractOption, TemplateDotOption);
+  _inherits(AbstractOption, TemplateMessageOption);
 
-  function AbstractConfig(option) {
+  function AbstractOption(option) {
     this.parentName = option.parentName;
     this.listener = option.listener;
     this.children = [];
   }
 
-  AbstractConfig.prototype.collect = function(target) {
+  AbstractOption.prototype.collect = function(target) {
     var _self = this;
 
     if (!(_self.name in target)) {
@@ -104,12 +104,12 @@
     });
   };
 
-  AbstractConfig.prototype.initName = function(name) {
+  AbstractOption.prototype.initName = function(name) {
     this.name = name;
     this.idPrefix = this.parentName + '_' + this.name;
   };
 
-  AbstractConfig.prototype.initChildren = function(children) {
+  AbstractOption.prototype.initChildren = function(children) {
     for (var i=0; i<children.length; i++) {
       var child = children[i].newInstance({
         parentName: this.idPrefix,
@@ -122,7 +122,7 @@
 
   /**
    * create child builder object.
-   * child is InputElement or Config class.
+   * child is InputElement or Option class.
    */
   function child(constructorFunction, name) {
     return {
@@ -133,8 +133,8 @@
     };
   }
 
-  function BasicConfig(option) {
-    AbstractConfig.call(this, option);
+  function BasicOption(option) {
+    AbstractOption.call(this, option);
 
     this.initName('basic');
     this.initChildren([
@@ -146,20 +146,20 @@
     ]);
   }
 
-  function TemplateConfig(option) {
-    AbstractConfig.call(this, option);
+  function TemplateOption(option) {
+    AbstractOption.call(this, option);
 
     this.initName('template');
     this.initChildren([
-      child(TemplateColorsConfig, 'colors'),
-      child(TemplateArrowConfig),
-      child(TemplateBranchConfig),
-      child(TemplateCommitConfig)
+      child(TemplateColorsOption, 'colors'),
+      child(TemplateArrowOption),
+      child(TemplateBranchOption),
+      child(TemplateCommitOption)
     ]);
   }
 
-  function TemplateArrowConfig(option) {
-    AbstractConfig.call(this, option);
+  function TemplateArrowOption(option) {
+    AbstractOption.call(this, option);
     
     this.initName('arrow');
     this.initChildren([
@@ -169,8 +169,8 @@
     ]);
   }
 
-  function TemplateBranchConfig(option) {
-    AbstractConfig.call(this, option);
+  function TemplateBranchOption(option) {
+    AbstractOption.call(this, option);
 
     this.initName('branch');
     this.initChildren([
@@ -185,8 +185,8 @@
     ]);
   }
 
-  function TemplateCommitConfig(option) {
-    AbstractConfig.call(this, option);
+  function TemplateCommitOption(option) {
+    AbstractOption.call(this, option);
 
     this.initName('commit');
     this.initChildren([
@@ -194,13 +194,13 @@
       child(TextBox, 'spacingY'),
       child(TextBox, 'widthExtension'),
       child(TextBox, 'color'),
-      child(TemplateDotConfig),
-      child(TemplateMessageConfig)
+      child(TemplateDotOption),
+      child(TemplateMessageOption)
     ]);
   }
 
-  function TemplateDotConfig(option) {
-    AbstractConfig.call(this, option);
+  function TemplateDotOption(option) {
+    AbstractOption.call(this, option);
 
     this.initName('dot');
     this.initChildren([
@@ -211,8 +211,8 @@
     ]);
   }
 
-  function TemplateMessageConfig(option) {
-    AbstractConfig.call(this, option);
+  function TemplateMessageOption(option) {
+    AbstractOption.call(this, option);
 
     this.initName('message');
     this.initChildren([
@@ -234,7 +234,7 @@
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
-  var dummyConfig = new DummyConfig({
+  var dummyOption = new DummyOption({
     listener: function() {
       draw();
     }
@@ -271,7 +271,7 @@
     this.draw = function(commands) {
       _refreshCanvas();
 
-      var option = dummyConfig.collectOpiton();
+      var option = dummyOption.collectOpiton();
       var git = new GitGraphWrapperExtention(option);
 
       git.defaultOptions({

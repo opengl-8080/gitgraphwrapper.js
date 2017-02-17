@@ -64,21 +64,24 @@
     var _self = this;
     var _listener = option.listener;
     var _name = 'option';
-    var _basic = new BasicOption({parentName: _name, listener: _listener});
+    var _base = new BaseOption({parentName: _name, listener: _listener});
     var _template = new TemplateOption({parentName: _name, listener: _listener});
     var _branchOptions = {};
     
     this.collectOpiton = function() {
-      var basicOption = {};
-      _basic.collect(basicOption);
+      // collect base options
+      var baseOption = {};
+      _base.collect(baseOption);
       
-      var option = basicOption.basic;
-      option.template = new GitGraph.Template().get(basicOption.basic.template);
+      // collect template options
+      var option = baseOption.base;
+      option.template = new GitGraph.Template().get(baseOption.base.template);
       _template.collect(option);
 
-      option.branchOptions = {};
+      // collect branch options
+      option.branch = {};
       for (var branchName in _branchOptions) {
-        _branchOptions[branchName].collect(option.branchOptions);
+        _branchOptions[branchName].collect(option.branch);
       }
 
       return option;
@@ -129,7 +132,7 @@
     };
   }
 
-  _inherits(AbstractOption, BasicOption);
+  _inherits(AbstractOption, BaseOption);
   _inherits(AbstractOption, TemplateOption);
   _inherits(AbstractOption, TemplateArrowOption);
   _inherits(AbstractOption, TemplateBranchOption);
@@ -186,10 +189,10 @@
     };
   }
 
-  function BasicOption(option) {
+  function BaseOption(option) {
     AbstractOption.call(this, option);
 
-    this.initName('basic');
+    this.initName('base');
     this.initChildren([
       child(SelectBox, 'template'),
       child(BooleanSelectBox, 'reverseArrow'),
@@ -351,7 +354,7 @@
       var git = new GitGraphWrapperExtention(option);
 
       git.defaultOptions({
-        branch: option.branchOptions
+        branch: option.branch
       });
 
       for (var i=0; i<commands.length; i++) {

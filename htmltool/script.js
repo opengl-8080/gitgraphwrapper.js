@@ -45,10 +45,10 @@
   };
 
   // define inheritance relationship for InputElement
-  _inherits(InputElement, TextBox);
-  _inherits(InputElement, SelectBox);
-  _inherits(InputElement, BooleanSelectBox);
-  _inherits(InputElement, TemplateColorsOption);
+  inherits(InputElement, TextBox);
+  inherits(InputElement, SelectBox);
+  inherits(InputElement, BooleanSelectBox);
+  inherits(InputElement, TemplateColorsOption);
 
   /**
    * <input type="text"> element.
@@ -289,15 +289,15 @@
   }
 
   // define inheritance relationship for AbstractOption
-  _inherits(AbstractOption, BaseOption);
-  _inherits(AbstractOption, TemplateOption);
-  _inherits(AbstractOption, TemplateArrowOption);
-  _inherits(AbstractOption, TemplateBranchOption);
-  _inherits(AbstractOption, TemplateCommitOption);
-  _inherits(AbstractOption, TemplateDotOption);
-  _inherits(AbstractOption, TemplateMessageOption);
-  _inherits(AbstractOption, BranchOption);
-  _inherits(AbstractOption, BranchCommitDefaultOption);
+  inherits(AbstractOption, BaseOption);
+  inherits(AbstractOption, TemplateOption);
+  inherits(AbstractOption, TemplateArrowOption);
+  inherits(AbstractOption, TemplateBranchOption);
+  inherits(AbstractOption, TemplateCommitOption);
+  inherits(AbstractOption, TemplateDotOption);
+  inherits(AbstractOption, TemplateMessageOption);
+  inherits(AbstractOption, BranchOption);
+  inherits(AbstractOption, BranchCommitDefaultOption);
 
   /**
    * base option definition.
@@ -655,7 +655,7 @@
   /**
    * Define class inheritance.
    */
-  function _inherits(SuperClass, SubClass) {
+  function inherits(SuperClass, SubClass) {
       var f = function() {};
       f.prototype = SuperClass.prototype;
       SubClass.prototype = new f();

@@ -39,7 +39,7 @@ html, body {
   font-family: Consolas, 'Courier New', Courier, Monaco, monospace;
 }
 
-#config-area {
+#option-area {
   width: 60%;
   height: 100%;
   float: left;
@@ -54,7 +54,7 @@ h4 {
   margin: 0px;
 }
 
-.config-item {
+.option-item {
   display: inline-block;
   margin-right: 10px;
 }

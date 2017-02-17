@@ -636,17 +636,35 @@
      * start program.
      */
     this.start = function() {
+      // load options
       _storage.load();
       _gitGraphOption.restore(_storage.getOption());
       _editor.setRawText(_storage.getText());
 
-      onClick('addNewBranchOptionButton', function() {
-        var branchName = byId('newBranchName').value;
-        _gitGraphOption.addBranch(branchName);
-      });
+      // setup event
+      onClick('addNewBranchOptionButton', _onClickNewBranchButton);
+      onClick('expand', _onClickExpandButton);
 
+      // start
       _draw();
     };
+
+    function _onClickNewBranchButton() {
+      var branchName = byId('newBranchName').value;
+      _gitGraphOption.addBranch(branchName);
+    }
+
+    function _onClickExpandButton() {
+      var bottomArea = byId('bottom-area');
+
+      if (bottomArea.style.height === '') {
+        bottomArea.style.height = '80%';
+        byId('expand').innerText = 'expand↓';
+      } else {
+        bottomArea.style.height = '';
+        byId('expand').innerText = 'expand↑';
+      }
+    }
   }
 
   ////////////////////////////////////////////////////////////////////////////////////
@@ -680,4 +698,5 @@
   // Start
   ////////////////////////////////////////////////////////////////////////////////////
   new MainController().start();
+
 })();

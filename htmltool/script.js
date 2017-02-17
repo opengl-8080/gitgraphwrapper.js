@@ -537,7 +537,7 @@
     this.getCommands = function() {
       var commands = [];
       
-      var lines = _editor.value.split('\n');
+      var lines = _removeMultiLineComment(_editor.value).split('\n');
       for (var i=0; i<lines.length; i++) {
         var line = lines[i].trim();
 
@@ -548,6 +548,10 @@
 
       return commands;
     };
+
+    function _removeMultiLineComment(text) {
+      return text.replace(/\/\*(.|\n)*\*\//g, '\n');
+    }
 
     this.getRawText = function() {
       return _editor.value;

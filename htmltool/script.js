@@ -67,6 +67,23 @@
     var _base = new BaseOption({parentName: _name, listener: _listener});
     var _template = new TemplateOption({parentName: _name, listener: _listener});
     var _branchOptions = {};
+
+    this.dump = function() {
+      // collect base options
+      var option = {};
+      _base.collect(option);
+      
+      // collect template options
+      _template.collect(option);
+
+      // collect branch options
+      option.branch = {};
+      for (var branchName in _branchOptions) {
+        _branchOptions[branchName].collect(option.branch);
+      }
+
+      return option;
+    };
     
     this.collectOpiton = function() {
       // collect base options
@@ -87,16 +104,27 @@
       return option;
     };
 
+    this.restore = function(source) {
+      _base.restore(source);
+      _template.restore(source);
+      for (var branchName in source.branch) {
+        this.addBranch(branchName);
+        _branchOptions[branchName].restore(source.branch);
+      }
+    };
+
     this.addBranch = function(branchName) {
       // skip if aleady exists
       if (document.getElementById(branchName)) {
         return;
       }
 
+      // create html
       var html = _createHtml(branchName);
       _appendHtml(branchName, html);
       _initRemoveButton(branchName);
 
+      // create Option instance
       _branchOptions[branchName] = new BranchOption({
         parentName: _name + '_branch',
         listener: _listener,
@@ -119,12 +147,12 @@
 
     function _initRemoveButton(branchName) {
       document.getElementById(branchName + '_remove').addEventListener('click', function() {
-        _self.removeBranch(branchName);
+        _removeBranch(branchName);
         draw();
       });
     }
 
-    this.removeBranch = function(branchName) {
+    function _removeBranch(branchName) {
       var branchArea = document.getElementById(branchName + "_options");
       document.getElementById('newBranchesTarget').removeChild(branchArea);
 
@@ -157,6 +185,18 @@
 
     _self.children.forEach(function(child) {
       child.collect(target[_self.name]);
+    });
+  };
+
+  AbstractOption.prototype.restore = function(source) {
+    var _self = this;
+
+    if (!(_self.name in source)) {
+      return;
+    }
+
+    _self.children.forEach(function(child) {
+      child.restore(source[_self.name]);
     });
   };
 
@@ -315,17 +355,19 @@
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////
+  var storage = new Storage();
+  storage.load();
+
   var dummyOption = new DummyOption({
     listener: function() {
       draw();
     }
   });
-  var storage = new Storage();
-  storage.load();
+  dummyOption.restore(storage.getOption());
 
   var graph = new Graph();
   var editor = new Editor();
-  editor.setRawText(storage.getEditorText());
+  editor.setRawText(storage.getText());
   editor.setListener(draw);
 
   draw();
@@ -334,7 +376,7 @@
     var commands = editor.getCommands();
     graph.draw(commands);
 
-    // storage.save(editor, config);
+    storage.save(dummyOption, editor);
   }
 
   document.getElementById('addNewBranchOptionButton').addEventListener('click', function() {
@@ -462,13 +504,13 @@
 
   function Storage() {
     var KEY = "gitgraph.storage";
-    var _editor;
-    var _config;
+    var _text;
+    var _option;
 
-    this.save = function(editor, config) {
+    this.save = function(option, editor) {
       var obj = {
-        editor: editor.getRawText(),
-        config: config
+        text: editor.getRawText(),
+        option: option.dump()
       };
 
       localStorage.setItem(KEY, JSON.stringify(obj));
@@ -478,20 +520,20 @@
       var json = localStorage.getItem(KEY);
       if (typeof json === 'string') {
         var obj = JSON.parse(json);
-        _editor = obj.editor;
-        _config = obj.config;
+        _text = obj.text;
+        _option = obj.option;
       } else {
-        _editor = '';
-        _config = {};
+        _text = '';
+        _option = {};
       }
     };
 
-    this.getEditorText = function() {
-      return _editor;
+    this.getText = function() {
+      return _text;
     };
 
-    this.getConfigObj = function() {
-      return _config;
+    this.getOption = function() {
+      return _option;
     };
 
     this.remove = function() {

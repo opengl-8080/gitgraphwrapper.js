@@ -44,6 +44,13 @@
     }
   };
 
+  /**
+   * Clear value.
+   */
+  InputElement.prototype.clear = function() {
+    this.element.value = '';
+  };
+
   // define inheritance relationship for InputElement
   inherits(InputElement, TextBox);
   inherits(InputElement, SelectBox);
@@ -208,6 +215,18 @@
 
       delete _branchOptions[branchName];
     };
+
+    /**
+     * Clear options.
+     */
+    this.clear = function() {
+      _base.clear();
+      _template.clear();
+
+      for (var branchName in _branchOptions) {
+        _removeBranch(branchName);
+      }
+    };
   }
 
   /**
@@ -273,6 +292,15 @@
 
       this.children.push(child);
     }
+  };
+
+  /**
+   * Clear values of children.
+   */
+  AbstractOption.prototype.clear = function() {
+    this.children.forEach(function(child) {
+      child.clear();
+    });
   };
 
   /**
@@ -576,35 +604,27 @@
         }, 500);
       });
     }
+
+    this.clear = function() {
+      _editor.value = '';
+    };
   }
   
   /**
    * To save and restore options.
    */
-  function Storage() {
+  function Storage(gitGraphOption, editor) {
     var KEY = "gitgraph.storage";
     var _text;
     var _option;
 
-    this.save = function(option, editor) {
-      var obj = {
-        text: editor.getRawText(),
-        option: option.dump()
-      };
-
-      localStorage.setItem(KEY, JSON.stringify(obj));
+    this.save = function() {
+      localStorage.setItem(KEY, this.export());
     };
 
     this.load = function() {
       var json = localStorage.getItem(KEY);
-      if (typeof json === 'string') {
-        var obj = JSON.parse(json);
-        _text = obj.text;
-        _option = obj.option;
-      } else {
-        _text = '';
-        _option = {};
-      }
+      this.import(json);
     };
 
     this.getText = function() {
@@ -615,8 +635,30 @@
       return _option;
     };
 
-    this.remove = function() {
+    this.clear = function() {
       localStorage.removeItem(KEY);
+      editor.clear();
+      gitGraphOption.clear();
+    };
+
+    this.export = function() {
+      var obj = {
+        text: editor.getRawText(),
+        option: gitGraphOption.dump()
+      };
+
+      return JSON.stringify(obj);
+    };
+
+    this.import = function(json) {
+      editor.clear();
+      gitGraphOption.clear();
+
+      if (typeof json === 'string') {
+        var obj = JSON.parse(json);
+        editor.setRawText(obj.text);
+        gitGraphOption.restore(obj.option);
+      }
     };
   }
 
@@ -626,14 +668,14 @@
   function MainController() {
     var _gitGraphOption = new GitGraphOption({listener: _draw});
     var _editor = new Editor({listener: _draw});
-    var _storage = new Storage();
+    var _storage = new Storage(_gitGraphOption, _editor);
     var _graph = new Graph(_gitGraphOption);
 
     function _draw() {
       var commands = _editor.getCommands();
       _graph.draw(commands);
 
-      _storage.save(_gitGraphOption, _editor);
+      _storage.save();
     }
 
     /**
@@ -642,12 +684,13 @@
     this.start = function() {
       // load options
       _storage.load();
-      _gitGraphOption.restore(_storage.getOption());
-      _editor.setRawText(_storage.getText());
 
       // setup event
       onClick('addNewBranchOptionButton', _onClickNewBranchButton);
       onClick('expand', _onClickExpandButton);
+      onClick('exportButton', _onClickExportButton);
+      onClick('importButton', _onClickImportButton);
+      onClick('clearButton', _onClickClearButton);
 
       // start
       _draw();
@@ -667,6 +710,32 @@
       } else {
         bottomArea.style.height = '';
         byId('expand').innerText = 'expand↑';
+      }
+    }
+
+    function _onClickExportButton() {
+      var json = _storage.export();
+      prompt('Please copy a following json text, and save as an any file.', json);
+    }
+
+    function _onClickImportButton() {
+      var json = prompt("Please paste a json text that you saved as a file before.\n***Caution*** : All settings and editor's text will be overriden by imported settings.");
+
+      if (json !== null) {
+        try {
+          _storage.import(json);
+          _draw();
+        } catch (e) {
+          console.error(e);
+          alert('Failed to import options!');
+        }
+      }
+    }
+
+    function _onClickClearButton() {
+      if (confirm("To clear local storage, all settings and editor's text.\nAre you OK?")) {
+        _storage.clear();
+        alert('complete');
       }
     }
   }

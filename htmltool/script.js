@@ -1,13 +1,22 @@
 (function() {
-  // refactoring
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Input elements
+  ////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Base class of input elements.
+   */
   function InputElement(option) {
     this.name = option.name;
     this.id = option.parentName + '_' + this.name;
     this.listener = option.listener;
-    this.element = document.getElementById(this.id);
+    this.element = byId(this.id);
+
     this.element.addEventListener('change', this.listener);
   }
 
+  /**
+   * Collect this input value into target object.
+   */
   InputElement.prototype.collect = function(target) {
     var value = this.element.value;
 
@@ -19,48 +28,77 @@
     }
   };
 
+  /**
+   * Storategy to map value.
+   */
   InputElement.prototype.mapValue = function(value) {
     return value;
   };
 
-  InputElement.prototype.dump = InputElement.prototype.collect;
-
+  /**
+   * Restore value from source object.
+   */
   InputElement.prototype.restore = function(source) {
     if (this.name in source && source[this.name] !== '') {
       this.element.value = source[this.name];
     }
   };
 
-  function TextBox(option) {
-    InputElement.call(this, option);
-  }
-
-  function SelectBox(option) {
-    InputElement.call(this, option);
-  }
-
-  function BooleanSelectBox(option) {
-    InputElement.call(this, option);
-  }
-
-  function TemplateColorsOption(option) {
-    InputElement.call(this, option);
-  }
-
+  // define inheritance relationship for InputElement
   _inherits(InputElement, TextBox);
   _inherits(InputElement, SelectBox);
   _inherits(InputElement, BooleanSelectBox);
   _inherits(InputElement, TemplateColorsOption);
 
+  /**
+   * <input type="text"> element.
+   */
+  function TextBox(option) {
+    InputElement.call(this, option);
+  }
+
+  /**
+   * <select> element.
+   */
+  function SelectBox(option) {
+    InputElement.call(this, option);
+  }
+
+  /**
+   * <select> element as primitive boolean value.
+   */
+  function BooleanSelectBox(option) {
+    InputElement.call(this, option);
+  }
+
+  /**
+   * Map value from String to boolean.
+   */
   BooleanSelectBox.prototype.mapValue = function(value) {
     return value === 'true';
   };
 
+  /**
+   * For template.colors options element.
+   */
+  function TemplateColorsOption(option) {
+    InputElement.call(this, option);
+  }
+
+  /**
+   * Map value to color code array.
+   */
   TemplateColorsOption.prototype.mapValue = function(value) {
     return value.replace(/ */g, '').split(',');
   };
 
-  function DummyOption(option) {
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Options
+  ////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Root option.
+   */
+  function GitGraphOption(option) {
     var _self = this;
     var _listener = option.listener;
     var _name = 'option';
@@ -68,6 +106,9 @@
     var _template = new TemplateOption({parentName: _name, listener: _listener});
     var _branchOptions = {};
 
+    /**
+     * Dump option values as is.
+     */
     this.dump = function() {
       // collect base options
       var option = {};
@@ -85,6 +126,9 @@
       return option;
     };
     
+    /**
+     * Collect option values for GitGraph parameter.
+     */
     this.collectOpiton = function() {
       // collect base options
       var baseOption = {};
@@ -104,6 +148,9 @@
       return option;
     };
 
+    /**
+     * Restore option values from source object.
+     */
     this.restore = function(source) {
       _base.restore(source);
       _template.restore(source);
@@ -113,9 +160,12 @@
       }
     };
 
+    /**
+     * Add new branch option.
+     */
     this.addBranch = function(branchName) {
       // skip if aleady exists
-      if (document.getElementById(branchName)) {
+      if (byId(branchName)) {
         return;
       }
 
@@ -133,7 +183,7 @@
     };
 
     function _createHtml(branchName) {
-      var html = document.getElementById('newBranchOptionTemplate').innerText;
+      var html = byId('newBranchOptionTemplate').innerText;
       return html.replace(/\${branchName}/g, branchName);
     }
 
@@ -142,40 +192,39 @@
       div.innerHTML = html;
       div.id = branchName + '_options';
 
-      document.getElementById('newBranchesTarget').appendChild(div);
+      byId('newBranchesTarget').appendChild(div);
     }
 
     function _initRemoveButton(branchName) {
-      document.getElementById(branchName + '_remove').addEventListener('click', function() {
+      onClick(branchName + '_remove', function() {
         _removeBranch(branchName);
-        draw();
+        _listener();
       });
     }
 
     function _removeBranch(branchName) {
-      var branchArea = document.getElementById(branchName + "_options");
-      document.getElementById('newBranchesTarget').removeChild(branchArea);
+      var branchArea = byId(branchName + "_options");
+      byId('newBranchesTarget').removeChild(branchArea);
 
       delete _branchOptions[branchName];
     };
   }
 
-  _inherits(AbstractOption, BaseOption);
-  _inherits(AbstractOption, TemplateOption);
-  _inherits(AbstractOption, TemplateArrowOption);
-  _inherits(AbstractOption, TemplateBranchOption);
-  _inherits(AbstractOption, TemplateCommitOption);
-  _inherits(AbstractOption, TemplateDotOption);
-  _inherits(AbstractOption, TemplateMessageOption);
-  _inherits(AbstractOption, BranchOption);
-  _inherits(AbstractOption, BranchCommitDefaultOption);
-
+  /**
+   * Base of option classes.
+   * 
+   * Option class has some children.
+   * Children include other AbstractOptions or InputElements.
+   */
   function AbstractOption(option) {
     this.parentName = option.parentName;
     this.listener = option.listener;
     this.children = [];
   }
 
+  /**
+   * Collect option values from children and set these into target object.
+   */
   AbstractOption.prototype.collect = function(target) {
     var _self = this;
 
@@ -188,6 +237,9 @@
     });
   };
 
+  /**
+   * Restore values into children from source object.
+   */
   AbstractOption.prototype.restore = function(source) {
     var _self = this;
 
@@ -200,14 +252,21 @@
     });
   };
 
+  /**
+   * Initialize name and idPrefix property.
+   * idPrefix is important to create child instances.
+   */
   AbstractOption.prototype.initName = function(name) {
     this.name = name;
     this.idPrefix = this.parentName + '_' + this.name;
   };
 
-  AbstractOption.prototype.initChildren = function(children) {
-    for (var i=0; i<children.length; i++) {
-      var child = children[i].newInstance({
+  /**
+   * Initialize children by child element builders.
+   */
+  AbstractOption.prototype.initChildren = function(childBuilders) {
+    for (var i=0; i<childBuilders.length; i++) {
+      var child = childBuilders[i].newInstance({
         parentName: this.idPrefix,
         listener: this.listener
       });
@@ -217,8 +276,8 @@
   };
 
   /**
-   * create child builder object.
-   * child is InputElement or Option class.
+   * Create child builder object.
+   * Child is InputElement or Option class.
    */
   function child(constructorFunction, name) {
     return {
@@ -229,6 +288,20 @@
     };
   }
 
+  // define inheritance relationship for AbstractOption
+  _inherits(AbstractOption, BaseOption);
+  _inherits(AbstractOption, TemplateOption);
+  _inherits(AbstractOption, TemplateArrowOption);
+  _inherits(AbstractOption, TemplateBranchOption);
+  _inherits(AbstractOption, TemplateCommitOption);
+  _inherits(AbstractOption, TemplateDotOption);
+  _inherits(AbstractOption, TemplateMessageOption);
+  _inherits(AbstractOption, BranchOption);
+  _inherits(AbstractOption, BranchCommitDefaultOption);
+
+  /**
+   * base option definition.
+   */
   function BaseOption(option) {
     AbstractOption.call(this, option);
 
@@ -242,6 +315,9 @@
     ]);
   }
 
+  /**
+   * template option definition.
+   */
   function TemplateOption(option) {
     AbstractOption.call(this, option);
 
@@ -254,6 +330,9 @@
     ]);
   }
 
+  /**
+   * template.arrow option definition.
+   */
   function TemplateArrowOption(option) {
     AbstractOption.call(this, option);
     
@@ -265,6 +344,9 @@
     ]);
   }
 
+  /**
+   * template.branch option definition.
+   */
   function TemplateBranchOption(option) {
     AbstractOption.call(this, option);
 
@@ -281,6 +363,9 @@
     ]);
   }
 
+  /**
+   * template.commit option definition.
+   */
   function TemplateCommitOption(option) {
     AbstractOption.call(this, option);
 
@@ -295,6 +380,9 @@
     ]);
   }
 
+  /**
+   * template.dot option definition.
+   */
   function TemplateDotOption(option) {
     AbstractOption.call(this, option);
 
@@ -307,6 +395,9 @@
     ]);
   }
 
+  /**
+   * template.message option definition.
+   */
   function TemplateMessageOption(option) {
     AbstractOption.call(this, option);
 
@@ -322,6 +413,9 @@
     ]);
   }
 
+  /**
+   * branch option definition.
+   */
   function BranchOption(option) {
     AbstractOption.call(this, option);
     this.branchName = option.branchName;
@@ -335,6 +429,9 @@
     ]);
   }
 
+  /**
+   * branch.commitDefaultOptions option definition.
+   */
   function BranchCommitDefaultOption(option) {
     AbstractOption.call(this, option);
 
@@ -347,52 +444,19 @@
     ]);
   }
 
-  function _inherits(SuperClass, SubClass) {
-      var f = function() {};
-      f.prototype = SuperClass.prototype;
-      SubClass.prototype = new f();
-      SubClass.prototype.constructor = SubClass;
-  }
-
-  ////////////////////////////////////////////////////////////////////////////////////////////
-  var storage = new Storage();
-  storage.load();
-
-  var dummyOption = new DummyOption({
-    listener: function() {
-      draw();
-    }
-  });
-  dummyOption.restore(storage.getOption());
-
-  var graph = new Graph();
-  var editor = new Editor();
-  editor.setRawText(storage.getText());
-  editor.setListener(draw);
-
-  draw();
-
-  function draw() {
-    var commands = editor.getCommands();
-    graph.draw(commands);
-
-    storage.save(dummyOption, editor);
-  }
-
-  document.getElementById('addNewBranchOptionButton').addEventListener('click', function() {
-    var branchName = document.getElementById('newBranchName').value;
-    dummyOption.addBranch(branchName);
-  });
-
-
-
-  function Graph() {
-    var _target = document.getElementById('target');
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Other classes
+  ////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Control graph canvas.
+   */
+  function Graph(gitGraphOption) {
+    var _target = byId('target');
 
     this.draw = function(commands) {
       _refreshCanvas();
 
-      var option = dummyOption.collectOpiton();
+      var option = gitGraphOption.collectOpiton();
       var git = new GitGraphWrapperExtention(option);
 
       git.defaultOptions({
@@ -424,6 +488,9 @@
     }
   }
 
+  /**
+   * Parse user input as git command.
+   */
   function Command(line) {
     var _elements = _normalize(line);
     var _method = _elements[0];
@@ -458,25 +525,14 @@
     }
   }
 
-  function Editor() {
-    var _editor = document.getElementById('editor');
+  /**
+   * Control textarea editor.
+   */
+  function Editor(option) {
+    var _editor = byId('editor');
     var _timeoutKey;
 
-    this.setListener = function(listener) {
-      _editor.addEventListener('keyup', function() {
-        if (_timeoutKey) {
-          clearTimeout(_timeoutKey);
-        }
-
-        _timeoutKey = setTimeout(function() {
-          try {
-            listener();
-          } finally {
-            _timeoutKey = null;
-          }
-        }, 500);
-      });
-    };
+    _setListener(option.listener);
 
     this.getCommands = function() {
       var commands = [];
@@ -500,8 +556,27 @@
     this.setRawText = function(value) {
       _editor.value = value;
     };
-  }
 
+    function _setListener(listener) {
+      _editor.addEventListener('keyup', function() {
+        if (_timeoutKey) {
+          clearTimeout(_timeoutKey);
+        }
+
+        _timeoutKey = setTimeout(function() {
+          try {
+            listener();
+          } finally {
+            _timeoutKey = null;
+          }
+        }, 500);
+      });
+    }
+  }
+  
+  /**
+   * To save and restore options.
+   */
   function Storage() {
     var KEY = "gitgraph.storage";
     var _text;
@@ -540,4 +615,69 @@
       localStorage.removeItem(KEY);
     };
   }
+
+  /**
+   * Controller of GitGraphEditor.
+   */
+  function MainController() {
+    var _gitGraphOption = new GitGraphOption({listener: _draw});
+    var _editor = new Editor({listener: _draw});
+    var _storage = new Storage();
+    var _graph = new Graph(_gitGraphOption);
+
+    function _draw() {
+      var commands = _editor.getCommands();
+      _graph.draw(commands);
+
+      _storage.save(_gitGraphOption, _editor);
+    }
+
+    /**
+     * start program.
+     */
+    this.start = function() {
+      _storage.load();
+      _gitGraphOption.restore(_storage.getOption());
+      _editor.setRawText(_storage.getText());
+
+      onClick('addNewBranchOptionButton', function() {
+        var branchName = byId('newBranchName').value;
+        _gitGraphOption.addBranch(branchName);
+      });
+
+      _draw();
+    };
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Global functions
+  ////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Define class inheritance.
+   */
+  function _inherits(SuperClass, SubClass) {
+      var f = function() {};
+      f.prototype = SuperClass.prototype;
+      SubClass.prototype = new f();
+      SubClass.prototype.constructor = SubClass;
+  }
+
+  /**
+   * Synonym of document.getElementById()
+   */
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+  /**
+   * Add click event listener.
+   */
+  function onClick(id, callback) {
+    byId(id).addEventListener('click', callback);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Start
+  ////////////////////////////////////////////////////////////////////////////////////
+  new MainController().start();
 })();

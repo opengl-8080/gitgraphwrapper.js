@@ -61,10 +61,12 @@
   };
 
   function DummyOption(option) {
+    var _self = this;
     var _listener = option.listener;
     var _name = 'option';
     var _basic = new BasicOption({parentName: _name, listener: _listener});
     var _template = new TemplateOption({parentName: _name, listener: _listener});
+    var _branchOptions = {};
     
     this.collectOpiton = function() {
       var basicOption = {};
@@ -74,7 +76,56 @@
       option.template = new GitGraph.Template().get(basicOption.basic.template);
       _template.collect(option);
 
+      option.branchOptions = {};
+      for (var branchName in _branchOptions) {
+        _branchOptions[branchName].collect(option.branchOptions);
+      }
+
       return option;
+    };
+
+    this.addBranch = function(branchName) {
+      // skip if aleady exists
+      if (document.getElementById(branchName)) {
+        return;
+      }
+
+      var html = _createHtml(branchName);
+      _appendHtml(branchName, html);
+      _initRemoveButton(branchName);
+
+      _branchOptions[branchName] = new BranchOption({
+        parentName: _name + '_branch',
+        listener: _listener,
+        branchName: branchName
+      });
+    };
+
+    function _createHtml(branchName) {
+      var html = document.getElementById('newBranchOptionTemplate').innerText;
+      return html.replace(/\${branchName}/g, branchName);
+    }
+
+    function _appendHtml(branchName, html) {
+      var div = document.createElement('div');
+      div.innerHTML = html;
+      div.id = branchName + '_options';
+
+      document.getElementById('newBranchesTarget').appendChild(div);
+    }
+
+    function _initRemoveButton(branchName) {
+      document.getElementById(branchName + '_remove').addEventListener('click', function() {
+        _self.removeBranch(branchName);
+        draw();
+      });
+    }
+
+    this.removeBranch = function(branchName) {
+      var branchArea = document.getElementById(branchName + "_options");
+      document.getElementById('newBranchesTarget').removeChild(branchArea);
+
+      delete _branchOptions[branchName];
     };
   }
 
@@ -85,6 +136,8 @@
   _inherits(AbstractOption, TemplateCommitOption);
   _inherits(AbstractOption, TemplateDotOption);
   _inherits(AbstractOption, TemplateMessageOption);
+  _inherits(AbstractOption, BranchOption);
+  _inherits(AbstractOption, BranchCommitDefaultOption);
 
   function AbstractOption(option) {
     this.parentName = option.parentName;
@@ -226,6 +279,31 @@
     ]);
   }
 
+  function BranchOption(option) {
+    AbstractOption.call(this, option);
+    this.branchName = option.branchName;
+
+    this.initName(this.branchName);
+    this.initChildren([
+      child(TextBox, 'color'),
+      child(TextBox, 'lineWidth'),
+      child(BooleanSelectBox, 'showLabel'),
+      child(BranchCommitDefaultOption)
+    ]);
+  }
+
+  function BranchCommitDefaultOption(option) {
+    AbstractOption.call(this, option);
+
+    this.initName('commitDefaultOptions');
+    this.initChildren([
+      child(TextBox, 'color'),
+      child(TextBox, 'messageColor'),
+      child(TextBox, 'labelColor'),
+      child(TextBox, 'dotColor')
+    ]);
+  }
+
   function _inherits(SuperClass, SubClass) {
       var f = function() {};
       f.prototype = SuperClass.prototype;
@@ -247,21 +325,19 @@
   editor.setRawText(storage.getEditorText());
   editor.setListener(draw);
 
-  var config = new Config();
-  _rebuildBranchOption(storage);
-  config.apply(storage.getConfigObj());
-  config.setListener(draw);
-
   draw();
 
   function draw() {
     var commands = editor.getCommands();
     graph.draw(commands);
 
-    storage.save(editor, config);
+    // storage.save(editor, config);
   }
 
-
+  document.getElementById('addNewBranchOptionButton').addEventListener('click', function() {
+    var branchName = document.getElementById('newBranchName').value;
+    dummyOption.addBranch(branchName);
+  });
 
 
 
@@ -275,7 +351,7 @@
       var git = new GitGraphWrapperExtention(option);
 
       git.defaultOptions({
-        branch: _createBranchOption()
+        branch: option.branchOptions
       });
 
       for (var i=0; i<commands.length; i++) {
@@ -283,42 +359,6 @@
         command.invoke(git);
       }
     };
-
-    function _createBranchOption() {
-      var branchDefaultOptions = {};
-
-      for (var key in config) {
-        var branchOptionKey = new BranchOptionKey(key);
-        if (branchOptionKey.isBranchOption()) {
-          var value = config[key];
-          var branchName = branchOptionKey.getBranchName();
-          var optionName = branchOptionKey.getOptionName();
-          if (!(branchName in branchDefaultOptions)) {
-            branchDefaultOptions[branchName] = {};
-          }
-
-          if (value !== '') {
-            var commitDefaultOptionRegExp = /^commitDefaultOptions_(.*)$/.exec(optionName);
-
-            if (optionName === 'showLabel') {
-              branchDefaultOptions[branchName][optionName] = value === 'true';
-            } if (commitDefaultOptionRegExp) {
-              var optName = commitDefaultOptionRegExp[1];
-
-              if (!('commitDefaultOptions' in branchDefaultOptions[branchName])) {
-                branchDefaultOptions[branchName].commitDefaultOptions = {};
-              }
-
-              branchDefaultOptions[branchName].commitDefaultOptions[optName] = value;
-            } else {
-              branchDefaultOptions[branchName][optionName] = value;
-            }
-          }
-        }
-      }
-
-      return branchDefaultOptions;
-    }
 
     function _refreshCanvas() {
       _removeCurrentCanvas();
@@ -455,185 +495,4 @@
       localStorage.removeItem(KEY);
     };
   }
-
-
-  function Config() {
-    var _defaults = {
-    };
-
-    var _elements = {};
-    var _listener = function() {};
-    var _self = this;
-
-    this.apply = function(obj) {
-      for (var key in obj) {
-        var branchOptionKey = new BranchOptionKey(key);
-
-        if (branchOptionKey.isBranchOption()) {
-          _initElement(key);
-          _setValue(key, obj[key]);
-        }
-      }
-    };
-
-    function _setValue(key, value) {
-      _self[key] = value;
-      _elements[key].setValue(_self[key]);
-    }
-
-    this.reset = function() {
-      this.apply(_defaults);
-    };
-
-    this.setListener = function(listener) {
-      _listener = listener;
-    };
-
-    this.addBranchOption = function(name) {
-      _initElement('branch_' + name + '_color');
-      _initElement('branch_' + name + '_lineWidth');
-      _initElement('branch_' + name + '_showLabel');
-      _initElement('branch_' + name + '_commitDefaultOptions_color');
-      _initElement('branch_' + name + '_commitDefaultOptions_messageColor');
-      _initElement('branch_' + name + '_commitDefaultOptions_labelColor');
-      _initElement('branch_' + name + '_commitDefaultOptions_dotColor');
-    };
-
-    this.removeBranchOption = function(name) {
-      for (var key in _elements) {
-        var branchOptionKey = new BranchOptionKey(key);
-        var branchName = branchOptionKey.getBranchName();
-
-        if (branchOptionKey.isBranchOption() && branchName === name) {
-          delete this[key];
-          delete _elements[key];
-        }
-      }
-    };
-
-    function _initElement(elementId) {
-      _elements[elementId] = new Element(document.getElementById(elementId));
-      _elements[elementId].addEventListener(_onChange);
-      _self[elementId] = _elements[elementId].getValue();
-    }
-
-    function _onChange() {
-      for (var key in _elements) {
-        _self[key] = _elements[key].getValue();
-      }
-
-      _listener();
-    }
-
-    this.reset();
-  }
-
-  function BranchOptionKey(key) {
-    var _regexp = new RegExp("^branch_([^_]*)_(.*)$").exec(key);
-
-    this.getKey = function() {
-      return key;
-    };
-
-    this.getBranchName = function() {
-      return this.isBranchOption() ? _regexp[1] : null;
-    };
-
-    this.getOptionName = function() {
-      return this.isBranchOption() ? _regexp[2] : null;
-    };
-
-    this.isBranchOption = function() {
-      return !!_regexp;
-    };
-  }
-
-  function Element(e) {
-    this.getValue = function() {
-      if (_isCheckbox()) {
-        return e.checked;
-      } else if (e.type === 'number') {
-        return Number(e.value);
-      } else {
-        return e.value;
-      }
-    };
-
-    this.setValue = function(value) {
-      if (_isCheckbox()) {
-        e.checked = value;
-      } else {
-        e.value = value;
-      }
-    };
-
-    this.addEventListener = function(listener) {
-      e.addEventListener('change', listener);
-    };
-
-    function _isCheckbox() {
-      return e.type === 'checkbox';
-    }
-  }
-
-  var bottomArea = document.getElementById('bottom-area');
-  var expand = document.getElementById('expand');
-  expand.addEventListener('click', function() {
-    if (bottomArea.style.height === '') {
-      bottomArea.style.height = '80%';
-      expand.innerText = 'expand↓';
-    } else {
-      bottomArea.style.height = '';
-      expand.innerText = 'expand↑';
-    }
-  });
-
-
-  var newBranchName = document.getElementById('newBranchName');
-
-  document.getElementById('addNewBranchOptionButton').addEventListener('click', function() {
-    var name = newBranchName.value;
-
-    _addBranchOptionArea(name);
-
-    config.addBranchOption(name);
-
-    draw();
-  });
-
-  function _rebuildBranchOption(storage) {
-    for (var key in storage.getConfigObj()) {
-      var branchOptionKey = new BranchOptionKey(key);
-
-      if (branchOptionKey.isBranchOption()) {
-        _addBranchOptionArea(branchOptionKey.getBranchName());
-      }
-    }
-  }
-
-  function _addBranchOptionArea(name) {
-    // skip if aleady exists
-    if (document.getElementById(name)) {
-      return;
-    }
-
-    var newBranchesTarget = document.getElementById('newBranchesTarget');
-
-    var newBranchOptionTemplate = document.getElementById('newBranchOptionTemplate');
-    var html = newBranchOptionTemplate.innerText;
-    html = html.replace(/\${name}/g, name);
-
-    var div = document.createElement('div');
-    div.innerHTML = html;
-
-    newBranchesTarget.appendChild(div);
-
-    var removeButton = document.getElementById(name + '_remove');
-    removeButton.addEventListener('click', function() {
-      newBranchesTarget.removeChild(div);
-      config.removeBranchOption(name);
-      draw();
-    });
-  }
-
 })();

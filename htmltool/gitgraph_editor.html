@@ -263,22 +263,22 @@
     </div>
 
     <script id="newBranchOptionTemplate" type="text/html">
-      <fieldset id="${name}">
-        <legend>${name}</legend>
+      <fieldset id="${branchName}">
+        <legend>${branchName}</legend>
         
         <div class="config-item">
-          <label for="branch_${name}_color">color</label>
-          <input type="text" id="branch_${name}_color" class="midium-input" placeholder="#000" />
+          <label for="option_branch_${branchName}_color">color</label>
+          <input type="text" id="option_branch_${branchName}_color" class="midium-input" placeholder="#000" />
         </div>
 
         <div class="config-item">
-          <label for="branch_${name}_lineWidth">lineWidth</label>
-          <input type="number" id="branch_${name}_lineWidth" class="short-input" />
+          <label for="option_branch_${branchName}_lineWidth">lineWidth</label>
+          <input type="number" id="option_branch_${branchName}_lineWidth" class="short-input" />
         </div>
 
         <div class="config-item">
-          <label for="branch_${name}_showLabel">showLabel</label>
-          <select id="branch_${name}_showLabel">
+          <label for="option_branch_${branchName}_showLabel">showLabel</label>
+          <select id="option_branch_${branchName}_showLabel">
             <option value=""></option>
             <option value="true">true</option>
             <option value="false">false</option>
@@ -289,26 +289,26 @@
           <legend>commitDefaultOptions</legend>
           
           <div class="config-item">
-            <label for="branch_${name}_commitDefaultOptions_color">color</label>
-            <input type="text" id="branch_${name}_commitDefaultOptions_color" class="midium-input" placeholder="#000" />
+            <label for="option_branch_${branchName}_commitDefaultOptions_color">color</label>
+            <input type="text" id="option_branch_${branchName}_commitDefaultOptions_color" class="midium-input" placeholder="#000" />
           </div>
           
           <div class="config-item">
-            <label for="branch_${name}_commitDefaultOptions_messageColor">messageColor</label>
-            <input type="text" id="branch_${name}_commitDefaultOptions_messageColor" class="midium-input" placeholder="#000" />
+            <label for="option_branch_${branchName}_commitDefaultOptions_messageColor">messageColor</label>
+            <input type="text" id="option_branch_${branchName}_commitDefaultOptions_messageColor" class="midium-input" placeholder="#000" />
           </div>
           
           <div class="config-item">
-            <label for="branch_${name}_commitDefaultOptions_labelColor">labelColor</label>
-            <input type="text" id="branch_${name}_commitDefaultOptions_labelColor" class="midium-input" placeholder="#000" />
+            <label for="option_branch_${branchName}_commitDefaultOptions_labelColor">labelColor</label>
+            <input type="text" id="option_branch_${branchName}_commitDefaultOptions_labelColor" class="midium-input" placeholder="#000" />
           </div>
           
           <div class="config-item">
-            <label for="branch_${name}_commitDefaultOptions_dotColor">dotColor</label>
-            <input type="text" id="branch_${name}_commitDefaultOptions_dotColor" class="midium-input" placeholder="#000" />
+            <label for="option_branch_${branchName}_commitDefaultOptions_dotColor">dotColor</label>
+            <input type="text" id="option_branch_${branchName}_commitDefaultOptions_dotColor" class="midium-input" placeholder="#000" />
           </div>
         </fieldset>
-        <button id="${name}_remove">remove</button>
+        <button id="${branchName}_remove">remove</button>
       </fieldset>
     </script>
     <script src="./gitgraph.min.js"></script>

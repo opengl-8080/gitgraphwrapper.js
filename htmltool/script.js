@@ -581,7 +581,27 @@
 
     this.initName(this.commitName);
     this.initChildren([
-      child(TextBox, 'color')
+      child(TextBox, 'color'),
+      child(TextBox, 'author'),
+      child(TextBox, 'sha1'),
+      child(BooleanSelectBox, 'tooltipDisplay'),
+      child(TextBox, 'tag'),
+      child(TextBox, 'tagColor'),
+      child(TextBox, 'tagFont'),
+      child(BooleanSelectBox, 'displayTagBox'),
+      child(TextBox, 'dotColor'),
+      child(TextBox, 'dotSize'),
+      child(TextBox, 'dotStrokeWidth'),
+      child(TextBox, 'dotStrokeColor'),
+      child(TextBox, 'message'),
+      child(BooleanSelectBox, 'messageDisplay'),
+      child(BooleanSelectBox, 'messageAuthorDisplay'),
+      child(BooleanSelectBox, 'messageBranchDisplay'),
+      child(BooleanSelectBox, 'messageHashDisplay'),
+      child(TextBox, 'messageColor'),
+      child(TextBox, 'messageFont'),
+      child(TextBox, 'labelColor'),
+      child(TextBox, 'labelFont')
     ]);
   }
 

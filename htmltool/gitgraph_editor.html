@@ -341,6 +341,146 @@
           <input type="text" id="option_commit_${commitName}_color" class="midium-input" placeholder="#000" />
         </div>
 
+        <div class="option-item">
+          <label for="option_commit_${commitName}_author">author</label>
+          <input type="text" id="option_commit_${commitName}_author" />
+        </div>
+
+        <div class="option-item">
+          <label for="option_commit_${commitName}_sha1">sha1</label>
+          <input type="text" id="option_commit_${commitName}_sha1" />
+        </div>
+
+        <div class="option-item">
+          <label for="option_commit_${commitName}_tooltipDisplay">tooltipDisplay</label>
+          <select id="option_commit_${commitName}_tooltipDisplay">
+            <option value=""></option>
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        </div>
+
+        <fieldset>
+          <legend>Tag</legend>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_tag">tag</label>
+            <input type="text" id="option_commit_${commitName}_tag" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_tagColor">tagColor</label>
+            <input type="text" id="option_commit_${commitName}_tagColor" class="midium-input" placeholder="#000" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_tagFont">tagFont</label>
+            <input type="text" id="option_commit_${commitName}_tagFont" class="large-input" placeholder="normal 12pt Calibri" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_displayTagBox">displayTagBox</label>
+            <select id="option_commit_${commitName}_displayTagBox">
+              <option value=""></option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Dot</legend>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_dotColor">dotColor</label>
+            <input type="text" id="option_commit_${commitName}_dotColor" class="midium-input" placeholder="#000" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_dotSize">dotSize</label>
+            <input type="number" id="option_commit_${commitName}_dotSize" class="short-input" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_dotStrokeWidth">dotStrokeWidth</label>
+            <input type="number" id="option_commit_${commitName}_dotStrokeWidth" class="short-input" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_dotStrokeColor">dotStrokeColor</label>
+            <input type="text" id="option_commit_${commitName}_dotStrokeColor" class="midium-input" placeholder="#000" />
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Message</legend>
+          
+          <div class="option-item">
+            <label for="option_commit_${commitName}_message">message</label>
+            <input type="text" id="option_commit_${commitName}_message" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_messageColor">messageColor</label>
+            <input type="text" id="option_commit_${commitName}_messageColor" class="midium-input" placeholder="#000" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_messageFont">messageFont</label>
+            <input type="text" id="option_commit_${commitName}_messageFont" class="large-input" placeholder="normal 12pt Calibri" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_messageDisplay">messageDisplay</label>
+            <select id="option_commit_${commitName}_messageDisplay">
+              <option value=""></option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_messageAuthorDisplay">messageAuthorDisplay</label>
+            <select id="option_commit_${commitName}_messageAuthorDisplay">
+              <option value=""></option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_messageBranchDisplay">messageBranchDisplay</label>
+            <select id="option_commit_${commitName}_messageBranchDisplay">
+              <option value=""></option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_messageHashDisplay">messageHashDisplay</label>
+            <select id="option_commit_${commitName}_messageHashDisplay">
+              <option value=""></option>
+              <option value="true">true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Label</legend>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_labelColor">labelColor</label>
+            <input type="text" id="option_commit_${commitName}_labelColor" class="midium-input" placeholder="#000" />
+          </div>
+
+          <div class="option-item">
+            <label for="option_commit_${commitName}_labelFont">labelFont</label>
+            <input type="text" id="option_commit_${commitName}_labelFont" class="large-input" placeholder="normal 12pt Calibri" />
+          </div>
+        </fieldset>
+
         <button id="${commitName}_remove">remove</button>
       </fieldset>
     </script>

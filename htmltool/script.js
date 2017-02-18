@@ -537,16 +537,17 @@
     };
 
     function _normalize(line) {
-      var elements = line.split(' ');
+      var elements = line.match(/[^\s"]+|"([^\\"]|\\\\|\\")*"/g);
       var result = [];
 
       for (var i=0; i<elements.length; i++) {
         var element = elements[i]
 
-        // remove empty strings
-        if (element !== '') {
-          result.push(element);
-        }
+        element = element.replace(/^"|"$/g, '');
+        element = element.replace(/\\"/g, '"');
+        element = element.replace(/\\\\/g, '\\');
+
+        result.push(element);
       }
 
       return result;

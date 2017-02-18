@@ -843,9 +843,9 @@
       _storage.load();
 
       // setup event
+      _handleResizePanelEvent();
       onClick('addNewBranchOptionButton', _onClickNewBranchButton);
       onClick('addNewCommitOptionButton', _onClickNewCommitButton);
-      onClick('expand', _onClickExpandButton);
       onClick('exportButton', _onClickExportButton);
       onClick('importButton', _onClickImportButton);
       onClick('clearButton', _onClickClearButton);
@@ -853,6 +853,16 @@
       // start
       _draw();
     };
+
+    function _handleResizePanelEvent() {
+      var buttons = document.getElementsByName('resizePanel');
+      for (var i=0; i<buttons.length; i++) {
+        buttons[i].addEventListener('click', function(e) {
+          var percent = e.target.value;
+          byId('bottom-area').style.height = percent + '%';
+        });
+      }
+    }
 
     function _onClickNewBranchButton() {
       var branchName = byId('newBranchName').value;
@@ -862,18 +872,6 @@
     function _onClickNewCommitButton() {
       var commitName = byId('newCommitName').value;
       _gitGraphOption.addCommit(commitName);
-    }
-
-    function _onClickExpandButton() {
-      var bottomArea = byId('bottom-area');
-
-      if (bottomArea.style.height === '') {
-        bottomArea.style.height = '80%';
-        byId('expand').innerText = 'expand↓';
-      } else {
-        bottomArea.style.height = '';
-        byId('expand').innerText = 'expand↑';
-      }
     }
 
     function _onClickExportButton() {

@@ -115,12 +115,14 @@
     var _commitOptions = {};
 
     var _commitOptionHtmlBuilder = new DynamicOptionHtmlBuilder({
+      prefix: 'commit',
       replaceHolder: 'commitName',
       targetId: 'newCommitsTarget',
       templateId: 'newCommitOptionTemplate'
     });
 
     var _branchOptionHtmlBuilder = new DynamicOptionHtmlBuilder({
+      prefix: 'branch',
       replaceHolder: 'branchName',
       targetId: 'newBranchesTarget',
       templateId: 'newBranchOptionTemplate'
@@ -303,7 +305,7 @@
       function _appendHtml(name, html) {
         var div = document.createElement('div');
         div.innerHTML = html;
-        div.id = name + '_options';
+        div.id = _prefix + '_' + name + '_options';
 
         byId(_targetId).appendChild(div);
       }
@@ -319,7 +321,7 @@
       }
 
       this.remove = function(name) {
-        var area = byId(name + "_options");
+        var area = byId(_prefix + '_' + name + "_options");
         byId(_targetId).removeChild(area);
       };
     }

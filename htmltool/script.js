@@ -112,6 +112,7 @@
     var _base = new BaseOption({parentName: _name, listener: _listener});
     var _template = new TemplateOption({parentName: _name, listener: _listener});
     var _branchOptions = {};
+    var _commitOptions = {};
 
     /**
      * Dump option values as is.
@@ -128,6 +129,12 @@
       option.branch = {};
       for (var branchName in _branchOptions) {
         _branchOptions[branchName].collect(option.branch);
+      }
+
+      // collect commit options
+      option.commit = {};
+      for (var commitName in _commitOptions) {
+        _commitOptions[commitName].collect(option.commit);
       }
 
       return option;
@@ -152,6 +159,12 @@
         _branchOptions[branchName].collect(option.branch);
       }
 
+      // collect commit options
+      option.commit = {};
+      for (var commitName in _commitOptions) {
+        _commitOptions[commitName].collect(option.commit);
+      }
+
       return option;
     };
 
@@ -165,6 +178,73 @@
         this.addBranch(branchName);
         _branchOptions[branchName].restore(source.branch);
       }
+      for (var commitName in source.commit) {
+        this.addCommit(commitName);
+        _commitOptions[commitName].restore(source.commit);
+      }
+    };
+
+    /**
+     * Find commit option by name.
+     * If not exists, return null.
+     */
+    this.getCommitOption = function(commitName) {
+      if (commitName in _commitOptions) {
+        var option = {};
+        _commitOptions[commitName].collect(option);
+        return option[commitName];
+      } else {
+        return null;
+      }
+    };
+
+    /**
+     * Add new commit option.
+     */
+    this.addCommit = function(commitName) {
+      // skip if aleady exists
+      if (byId('commit_' + commitName)) {
+        return;
+      }
+
+      // create html
+      var html = _createCommitHtml(commitName);
+      _appendCommitHtml(commitName, html);
+      _initRemoveCommitButton(commitName);
+
+      // create Option instance
+      _commitOptions[commitName] = new CommitOption({
+        parentName: _name + '_commit',
+        listener: _listener,
+        commitName: commitName
+      });
+    };
+
+    function _createCommitHtml(commitName) {
+      var html = byId('newCommitOptionTemplate').innerText;
+      return html.replace(/\${commitName}/g, commitName);
+    }
+
+    function _appendCommitHtml(commitName, html) {
+      var div = document.createElement('div');
+      div.innerHTML = html;
+      div.id = commitName + '_options';
+
+      byId('newCommitsTarget').appendChild(div);
+    }
+
+    function _initRemoveCommitButton(commitName) {
+      onClick(commitName + '_remove', function() {
+        _removeCommit(commitName);
+        _listener();
+      });
+    }
+
+    function _removeCommit(commitName) {
+      var commitArea = byId(commitName + "_options");
+      byId('newCommitsTarget').removeChild(commitArea);
+
+      delete _commitOptions[commitName];
     };
 
     /**
@@ -225,6 +305,10 @@
 
       for (var branchName in _branchOptions) {
         _removeBranch(branchName);
+      }
+
+      for (var commitName in _commitOptions) {
+        _removeCommit(commitName);
       }
     };
   }
@@ -326,6 +410,7 @@
   inherits(AbstractOption, TemplateMessageOption);
   inherits(AbstractOption, BranchOption);
   inherits(AbstractOption, BranchCommitDefaultOption);
+  inherits(AbstractOption, CommitOption);
 
   /**
    * base option definition.
@@ -473,6 +558,19 @@
     ]);
   }
 
+  /**
+   * commit option definition.
+   */
+  function CommitOption(option) {
+    AbstractOption.call(this, option);
+    this.commitName = option.commitName;
+
+    this.initName(this.commitName);
+    this.initChildren([
+      child(TextBox, 'color')
+    ]);
+  }
+
   ////////////////////////////////////////////////////////////////////////////////////
   // Other classes
   ////////////////////////////////////////////////////////////////////////////////////
@@ -520,7 +618,7 @@
   /**
    * Parse user input as git command.
    */
-  function Command(line) {
+  function Command(line, gitGraphOption) {
     var _elements = _normalize(line);
     var _method = _elements[0];
     var _arguments = _elements.slice(1);
@@ -530,12 +628,34 @@
         return;
       }
 
+      var args = _arguments;
+
+      if (_method === 'commit') {
+        args = _resolveCommitOption(gitGraphOption, args);
+      }
+
       try {
-        git[_method].apply(git, _arguments);
+        git[_method].apply(git, args);
       } catch (e) {
         console.warn(e);
       }
     };
+
+    function _resolveCommitOption(gitGraphOption, args) {
+      if (args.length < 1) {
+        return args;
+      }
+
+      var result = /^\$([^\s]+)$/.exec(args[0]);
+
+      if (result) {
+        var commitName = result[1];
+        var commitOption = gitGraphOption.getCommitOption(commitName);
+        return commitOption ? [commitOption] : args;
+      } else {
+        return args;
+      }
+    }
 
     function _normalize(line) {
       var elements = line.match(/[^\s"]+|"([^\\"]|\\\\|\\")*"/g);
@@ -559,6 +679,7 @@
    * Control textarea editor.
    */
   function Editor(option) {
+    var _gitGraphOption = option.gitGraphOption;
     var _editor = byId('editor');
     var _timeoutKey;
 
@@ -572,7 +693,7 @@
         var line = lines[i].trim();
 
         if (line.length !== 0) {
-          commands.push(new Command(line));
+          commands.push(new Command(line, _gitGraphOption));
         }
       }
 
@@ -669,7 +790,7 @@
    */
   function MainController() {
     var _gitGraphOption = new GitGraphOption({listener: _draw});
-    var _editor = new Editor({listener: _draw});
+    var _editor = new Editor({listener: _draw, gitGraphOption: _gitGraphOption});
     var _storage = new Storage(_gitGraphOption, _editor);
     var _graph = new Graph(_gitGraphOption);
 
@@ -689,6 +810,7 @@
 
       // setup event
       onClick('addNewBranchOptionButton', _onClickNewBranchButton);
+      onClick('addNewCommitOptionButton', _onClickNewCommitButton);
       onClick('expand', _onClickExpandButton);
       onClick('exportButton', _onClickExportButton);
       onClick('importButton', _onClickImportButton);
@@ -701,6 +823,11 @@
     function _onClickNewBranchButton() {
       var branchName = byId('newBranchName').value;
       _gitGraphOption.addBranch(branchName);
+    }
+
+    function _onClickNewCommitButton() {
+      var commitName = byId('newCommitName').value;
+      _gitGraphOption.addCommit(commitName);
     }
 
     function _onClickExpandButton() {

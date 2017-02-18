@@ -257,6 +257,12 @@
         </fieldset>
 
         <fieldset>
+          <legend>Commit options</legend>
+          <input type="text" id="newCommitName" /> <button id="addNewCommitOptionButton">add</button>
+          <div id="newCommitsTarget"></div>
+        </fieldset>
+
+        <fieldset>
           <legend>Storage</legend>
           <button id="exportButton">export</button>
           <button id="importButton">import</button>
@@ -323,6 +329,19 @@
           </div>
         </fieldset>
         <button id="${branchName}_remove">remove</button>
+      </fieldset>
+    </script>
+
+    <script id="newCommitOptionTemplate" type="text/html">
+      <fieldset id="commit_${commitName}">
+        <legend>${commitName}</legend>
+          
+        <div class="option-item">
+          <label for="option_commit_${commitName}_color">color</label>
+          <input type="text" id="option_commit_${commitName}_color" class="midium-input" placeholder="#000" />
+        </div>
+
+        <button id="${commitName}_remove">remove</button>
       </fieldset>
     </script>
     <script src="./gitgraph.min.js"></script>

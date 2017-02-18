@@ -114,6 +114,18 @@
     var _branchOptions = {};
     var _commitOptions = {};
 
+    var _commitOptionHtmlBuilder = new DynamicOptionHtmlBuilder({
+      replaceHolder: 'commitName',
+      targetId: 'newCommitsTarget',
+      templateId: 'newCommitOptionTemplate'
+    });
+
+    var _branchOptionHtmlBuilder = new DynamicOptionHtmlBuilder({
+      replaceHolder: 'branchName',
+      targetId: 'newBranchesTarget',
+      templateId: 'newBranchOptionTemplate'
+    });
+
     /**
      * Dump option values as is.
      */
@@ -203,14 +215,18 @@
      */
     this.addCommit = function(commitName) {
       // skip if aleady exists
-      if (byId('commit_' + commitName)) {
+      if (commitName in _commitOptions) {
         return;
       }
 
       // create html
-      var html = _createCommitHtml(commitName);
-      _appendCommitHtml(commitName, html);
-      _initRemoveCommitButton(commitName);
+      _commitOptionHtmlBuilder.appendHtml({
+        name: commitName,
+        onRemove: function() {
+          delete _commitOptions[commitName];
+          _listener();
+        }
+      });
 
       // create Option instance
       _commitOptions[commitName] = new CommitOption({
@@ -220,46 +236,23 @@
       });
     };
 
-    function _createCommitHtml(commitName) {
-      var html = byId('newCommitOptionTemplate').innerText;
-      return html.replace(/\${commitName}/g, commitName);
-    }
-
-    function _appendCommitHtml(commitName, html) {
-      var div = document.createElement('div');
-      div.innerHTML = html;
-      div.id = commitName + '_options';
-
-      byId('newCommitsTarget').appendChild(div);
-    }
-
-    function _initRemoveCommitButton(commitName) {
-      onClick(commitName + '_remove', function() {
-        _removeCommit(commitName);
-        _listener();
-      });
-    }
-
-    function _removeCommit(commitName) {
-      var commitArea = byId(commitName + "_options");
-      byId('newCommitsTarget').removeChild(commitArea);
-
-      delete _commitOptions[commitName];
-    };
-
     /**
      * Add new branch option.
      */
     this.addBranch = function(branchName) {
       // skip if aleady exists
-      if (byId(branchName)) {
+      if (branchName in _branchOptions) {
         return;
       }
 
       // create html
-      var html = _createHtml(branchName);
-      _appendHtml(branchName, html);
-      _initRemoveButton(branchName);
+      _branchOptionHtmlBuilder.appendHtml({
+        name: branchName,
+        onRemove: function() {
+          delete _branchOptions[branchName];
+          _listener();
+        }
+      });
 
       // create Option instance
       _branchOptions[branchName] = new BranchOption({
@@ -267,33 +260,6 @@
         listener: _listener,
         branchName: branchName
       });
-    };
-
-    function _createHtml(branchName) {
-      var html = byId('newBranchOptionTemplate').innerText;
-      return html.replace(/\${branchName}/g, branchName);
-    }
-
-    function _appendHtml(branchName, html) {
-      var div = document.createElement('div');
-      div.innerHTML = html;
-      div.id = branchName + '_options';
-
-      byId('newBranchesTarget').appendChild(div);
-    }
-
-    function _initRemoveButton(branchName) {
-      onClick(branchName + '_remove', function() {
-        _removeBranch(branchName);
-        _listener();
-      });
-    }
-
-    function _removeBranch(branchName) {
-      var branchArea = byId(branchName + "_options");
-      byId('newBranchesTarget').removeChild(branchArea);
-
-      delete _branchOptions[branchName];
     };
 
     /**
@@ -304,13 +270,59 @@
       _template.clear();
 
       for (var branchName in _branchOptions) {
-        _removeBranch(branchName);
+        _branchOptionHtmlBuilder.remove(branchName);
+        delete _branchOptions[branchName];
       }
 
       for (var commitName in _commitOptions) {
-        _removeCommit(commitName);
+        _commitOptionHtmlBuilder.remove(commitName);
+        delete _commitOptions[commitName];
       }
     };
+
+    function DynamicOptionHtmlBuilder(option) {
+      var _self = this;
+      var _replaceHolder = option.replaceHolder;
+      var _prefix = option.perfix;
+      var _targetId = option.targetId;
+      var _templateId = option.templateId;
+
+      this.appendHtml = function(option) {
+        var name = option.name;
+        var html = _createHtml(name);
+        _appendHtml(name, html);
+        _initRemoveButton(option);
+      };
+
+      function _createHtml(name) {
+        var html = byId(_templateId).innerText;
+        var regexp = new RegExp('\\${' + _replaceHolder + '}', 'g');
+        return html.replace(regexp, name);
+      }
+
+      function _appendHtml(name, html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        div.id = name + '_options';
+
+        byId(_targetId).appendChild(div);
+      }
+
+      function _initRemoveButton(option) {
+        var name = option.name;
+        var removeListener = option.onRemove;
+
+        onClick(name + '_remove', function() {
+          _self.remove(name);
+          removeListener();
+        });
+      }
+
+      this.remove = function(name) {
+        var area = byId(name + "_options");
+        byId(_targetId).removeChild(area);
+      };
+    }
   }
 
   /**

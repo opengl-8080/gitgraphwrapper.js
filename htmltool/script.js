@@ -450,6 +450,7 @@
 
     this.initName(this.branchName);
     this.initChildren([
+      child(TextBox, 'column'),
       child(TextBox, 'color'),
       child(TextBox, 'lineWidth'),
       child(BooleanSelectBox, 'showLabel'),

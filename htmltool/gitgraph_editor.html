@@ -262,12 +262,23 @@
           <button id="importButton">import</button>
           <button id="clearButton">clear</button>
         </fieldset>
+
+        <fieldset>
+          <legend>Libraries</legend>
+          <a href="http://gitgraphjs.com/" target="_brank">Gitgraph.js</a>
+          <a href="https://github.com/opengl-8080/gitgraphwrapper.js" target="_brank">gitgraphwrapper.js</a>
+        </fieldset>
       </div>
     </div>
 
     <script id="newBranchOptionTemplate" type="text/html">
       <fieldset id="${branchName}">
         <legend>${branchName}</legend>
+
+        <div class="option-item">
+          <label for="option_branch_${branchName}_column">column</label>
+          <input type="number" id="option_branch_${branchName}_column" min="0" class="short-input" />
+        </div>
         
         <div class="option-item">
           <label for="option_branch_${branchName}_color">color</label>

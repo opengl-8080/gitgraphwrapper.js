@@ -736,7 +736,6 @@
       if (confirm("To clear local storage, all settings and editor's text.\nAre you OK?")) {
         _storage.clear();
         _draw();
-        alert('complete');
       }
     }
   }

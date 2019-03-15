@@ -48,7 +48,7 @@ new GitGraphWrapper()
 ;
 ```
 
-It looks like using git comamnd at command line.
+It looks like using git command at command line.
 
 Probably, you may execute git command like following  at actual command line. (`add` command is omitted.)
 
